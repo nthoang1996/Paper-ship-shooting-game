@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".HostGameActivity"
+    android:weightSum="10">
+    <Button
+        android:id="@+id/btnHostOnlineGame"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:layout_weight="4"
+        android:background="@drawable/btn_selector_shape"
+        android:text="@string/host_online_game_text"
+        />
+
+    <Button
+        android:id="@+id/btnPracticeWithBOT"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_width="match_parent"
+        android:layout_marginTop="30dp"
+        android:layout_height="270dp"
+        android:layout_weight="4"
+        android:background="@drawable/btn_selector_shape"
+        android:text="@string/practice_with_bot_text"
+        />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:padding="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="40dp"
+        android:text="@string/back_text"/>
+
+</LinearLayout>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="22"
+    android:layout_margin="5dp"
+    android:background="#ffffff"
+    android:padding="6dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        android:layout_weight="17">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="7">
+
+            <TextView
+                android:id="@+id/text_level_user"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="50dp"
+                android:background="@drawable/circle_shape"
+                android:text="10"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="10"
+            android:layout_weight="3">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="10"
+                android:layout_weight="5">
+                <TextView
+                    android:id="@+id/text_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="PLAYER NAME"
+                    android:textSize="30sp"
+                    android:paddingLeft="10dp"
+                    android:layout_weight="9"
+                    android:gravity="bottom"
+                    android:textColor="#000000"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    >
+                    <ImageButton
+                        android:id="@+id/buttonChangeLanguage"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginBottom="8dp"
+                        android:scaleType = "centerCrop"
+                        android:background="#ffffff"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#FF0000" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:weightSum="10"
+                android:layout_weight="4">
+
+                    <ProgressBar
+                        android:id="@+id/progressBarLevel"
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="fill_parent"
+                        android:layout_height="20dp"
+                        android:layout_weight="2"
+                        android:paddingTop="10dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"/>
+
+                    <TextView
+                        android:id="@+id/text_user_exp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="8"
+                        android:text="450/910"
+                        android:textColor="#000000"
+                        android:gravity="center_horizontal"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="20"
+        android:layout_marginTop="20dp"
+        android:layout_weight="5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:weightSum="12"
+            android:layout_weight="1">
+
+            <com.google.android.material.tabs.TabLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id = "@+id/tabs"
+                android:background = "?attr/colorPrimary"
+                android:elevation="4dp"
+                android:minHeight ="?attr/actionBarSize"
+                app:tabMode = "fixed"
+                app:tabGravity = "fill"
+                app:tabTextColor = "#FFF"
+                app:tabSelectedTextColor="@color/colorAccent"
+                />
+            <androidx.viewpager.widget.ViewPager
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/pager"/>
+
+        </LinearLayout>
+    </LinearLayout>
+    <Button
+        android:id="@+id/btnSaveProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="@string/save_lable"/>
+</LinearLayout>

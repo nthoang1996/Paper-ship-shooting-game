@@ -1,0 +1,16 @@
+[
+  {
+    "languageList": [
+      {
+        "key": "vi",
+        "icon": "vi_flag",
+        "value": "Vietnamese"
+      },
+      {
+        "key": "en",
+        "icon": "en_flag",
+        "value": "English"
+      }
+    ]
+  }
+]

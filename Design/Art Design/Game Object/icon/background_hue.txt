@@ -1,0 +1,6 @@
+Hue:
+Blue: 204 13 +29
+Red:0 13 +11
+Green:
+
+Number shadow: 10 0 5  ----- 120*
