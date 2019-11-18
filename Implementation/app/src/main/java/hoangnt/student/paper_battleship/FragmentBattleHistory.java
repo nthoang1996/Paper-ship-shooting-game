@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -78,6 +79,7 @@ public class FragmentBattleHistory extends Fragment {
     public void showPopup(View view, int position) throws ParseException {
         final Dialog popupBattleHistoryInfo;
         popupBattleHistoryInfo = new Dialog(context);
+        popupBattleHistoryInfo.requestWindowFeature(Window.FEATURE_NO_TITLE);
         popupBattleHistoryInfo.setContentView(R.layout.popup_info_battle_history);
         txtViewEnemyName = (TextView) popupBattleHistoryInfo.findViewById(R.id.txtview_enemy_name);
         txtViewEnemyName.setText(listBattleHistory.get(position).getEnemy());

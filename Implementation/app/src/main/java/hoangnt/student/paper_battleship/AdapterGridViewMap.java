@@ -1,41 +1,43 @@
 package hoangnt.student.paper_battleship;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class AdapterGridViewItem extends BaseAdapter {
+public class AdapterGridViewMap  extends BaseAdapter {
     private Context context;
     private int layout;
-    private Integer[] listImageItem;
+    private Integer[] backgroundSea;
     LayoutInflater inflater;
 
-    public AdapterGridViewItem(Context context, int layout, Integer[] listImageItem) {
+
+
+    public AdapterGridViewMap(Context context, int layout, Integer[] backgroundSea)
+    {
         this.context = context;
         this.layout = layout;
-        this.listImageItem = listImageItem;
-        inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.backgroundSea = backgroundSea;
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-
     private class ViewHolder{
-        ImageView imgItem;
+        TextView cell;
     }
 
     @Override
     public int getCount() {
-        return listImageItem.length;
+        return backgroundSea.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return listImageItem[position];
+        return backgroundSea[position];
     }
 
     @Override
@@ -50,13 +52,14 @@ public class AdapterGridViewItem extends BaseAdapter {
         if(convertView == null){
             holder = new ViewHolder();
             convertView = inflater.inflate(layout, null);
-            holder.imgItem = (ImageView) convertView.findViewById(R.id.imageViewItem);
+            holder.cell = (TextView) convertView.findViewById(R.id.cell_grid);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder)convertView.getTag();
         }
         Log.d("My-debbuger", "print map:"+position);
-        holder.imgItem.setImageResource(listImageItem[position]);
+        holder.cell.setBackgroundResource(backgroundSea[position]);
         return convertView;
     }
 }
+

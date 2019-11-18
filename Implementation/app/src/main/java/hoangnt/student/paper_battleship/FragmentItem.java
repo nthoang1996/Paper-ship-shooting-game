@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -73,6 +74,7 @@ public class FragmentItem extends Fragment {
     public void showPopup(View view, int position){
         final Dialog popupItemInfo;
         popupItemInfo = new Dialog(context);
+        popupItemInfo.requestWindowFeature(Window.FEATURE_NO_TITLE);
         popupItemInfo.setContentView(R.layout.popup_item_info);
         txtViewItemName = (TextView) popupItemInfo.findViewById(R.id.item_name);
         if (position < arrItemName.length){

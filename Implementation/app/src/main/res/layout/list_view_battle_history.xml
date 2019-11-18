@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/txtview_enemy_name"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="match_parent"
         android:textSize="24sp"
         android:textStyle="bold"
