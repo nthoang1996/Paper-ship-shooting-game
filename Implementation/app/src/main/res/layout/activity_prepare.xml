@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    tools:context=".PrepareActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:textSize="25sp"
+        android:gravity="center"
+        android:text="Prepare For Battle!"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        >
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+
+            android:layout_weight="7">
+            <GridView
+                android:id="@+id/gridview_Board"
+                android:verticalSpacing="0dp"
+                android:horizontalSpacing="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:numColumns="5"
+                />
+
+        </LinearLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/GuideLine_center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5"/>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.1"
+                app:layout_constraintEnd_toStartOf="@+id/GuideLine_center">
+
+                <Button
+                    android:id="@+id/btn_Ship1x4"
+                    android:layout_width="40dp"
+                    android:layout_height="160dp"
+                    android:layout_margin="8dp"
+                    android:background="@color/colorPrimary" />
+
+                <Button
+                    android:id="@+id/btn_Ship1x3"
+                    android:layout_width="40dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="8dp"
+                    android:background="@color/colorPrimary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/GuideLine_center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_bias="0.1">
+
+                <Button
+                    android:id="@+id/btn_Ship1x2_1"
+                    android:layout_width="40dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="8dp"
+                    android:background="@color/colorPrimary" />
+
+                <Button
+                    android:id="@+id/btn_Ship1x2_2"
+                    android:layout_width="40dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="8dp"
+                    android:background="@color/colorPrimary" />
+
+                <Button
+                    android:id="@+id/btn_Ship1x1_1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="8dp"
+                    android:background="@color/colorPrimary" />
+
+                <Button
+                    android:id="@+id/btn_Ship1x1_2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="8dp"
+                    android:background="@color/colorPrimary" />
+
+                <Button
+                    android:id="@+id/btn_Ship1x1_3"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="8dp"
+                    android:background="@color/colorPrimary" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_Rotation"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Rotate"
+                app:layout_constraintBottom_toTopOf="@+id/btn_ResetLocation"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <Button
+                android:id="@+id/btn_ResetLocation"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_margin="8dp"
+                android:text="Reset Location"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:weightSum="10"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:weightSum="2"
+            android:layout_weight="4"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:layout_weight="1"
+
+
+                android:text="Time remaining"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:text="8"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:weightSum="10"
+            android:layout_weight="6"
+            android:gravity="right"
+            android:orientation="vertical">
+            <Button
+                android:layout_width="150dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:layout_margin="8dp"
+                android:layout_weight="7"
+                android:text="Ready"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
