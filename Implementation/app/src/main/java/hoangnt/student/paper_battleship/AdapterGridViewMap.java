@@ -1,6 +1,7 @@
 package hoangnt.student.paper_battleship;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,8 +58,7 @@ public class AdapterGridViewMap  extends BaseAdapter {
         }else{
             holder = (ViewHolder)convertView.getTag();
         }
-        Log.d("My-debbuger", "print map:"+position);
-        holder.cell.setBackgroundResource(backgroundSea[position]);
+        holder.cell.setBackgroundColor(Color.TRANSPARENT);
         return convertView;
     }
 }

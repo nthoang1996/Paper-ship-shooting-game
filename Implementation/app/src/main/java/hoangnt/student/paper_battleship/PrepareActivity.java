@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -155,103 +156,178 @@ public class PrepareActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(selectedShip > 0){
                     Ship shipSelected = listShip.get(selectedShip-1);
+                    String str = shipSelected.toString();
                     int type = shipSelected.getType();
                     int nextPost = -1;
                     int prePos = -1;
+                    int semiNextPost = -1;
                     if(previousSelectedShip == selectedShip){
                         deleteOldPosition(shipSelected, parent, position);
                     }
                     if(forceDeleteShip == 0){
                         switch (type){
                             case 1:
-                                setShipAtPosition(parent,position, shipSelected, 0);
+                                setShipAtPosition(parent,position, shipSelected, 0, shipSelected.getId_part().get(0), false);
                                 break;
-                            case 2: setShipAtPosition(parent,position, shipSelected,0);
+                            case 2:
                                 if(shipSelected.getOrigentation() == 1){
                                     nextPost = position + 5;
                                     if(nextPost >= 50){
                                         nextPost = position - 5;
+                                        shipSelected.getId_part().set(1,2);
+                                        shipSelected.getId_part().set(0,3);
                                     }
-                                    setShipAtPosition(parent,nextPost, shipSelected,1);
+                                    else {
+                                        shipSelected.getId_part().set(0,2);
+                                        shipSelected.getId_part().set(1,3);
+                                    }
+                                    setShipAtPosition(parent,position, shipSelected,0, shipSelected.getId_part().get(0), false);
+                                    setShipAtPosition(parent,nextPost, shipSelected,1, shipSelected.getId_part().get(1), false);
                                 }
                                 else {
                                     nextPost = position - 1;
-                                    if(nextPost/5 != position/5){
+                                    if(nextPost/5 != position/5 || nextPost == -1){
                                         nextPost = position+1;
+                                        shipSelected.getId_part().set(1,2);
+                                        shipSelected.getId_part().set(0,3);
                                     }
-                                    setShipAtPosition(parent,nextPost, shipSelected,1);
+                                    else {
+                                        shipSelected.getId_part().set(0,2);
+                                        shipSelected.getId_part().set(1,3);
+                                    }
+                                    setShipAtPosition(parent,position, shipSelected,0, shipSelected.getId_part().get(0), false);
+                                    setShipAtPosition(parent,nextPost, shipSelected,1, shipSelected.getId_part().get(1), false);
                                 }
                                 break;
                             case 3:
-                                setShipAtPosition(parent,position, shipSelected,0);
                                 if(shipSelected.getOrigentation()==1){
                                     nextPost = position + 5;
+                                    prePos = position - 5;
                                     if(nextPost >= 50){
                                         nextPost = position - 10;
+                                        shipSelected.getId_part().set(0,6);
+                                        shipSelected.getId_part().set(1,4);
+                                        shipSelected.getId_part().set(2,5);
                                     }
-                                    setShipAtPosition(parent,nextPost, shipSelected,1);
-                                    prePos = position - 5;
-                                    if(prePos < 0){
+                                    else if(prePos < 0){
                                         prePos = position + 10;
+                                        shipSelected.getId_part().set(0,4);
+                                        shipSelected.getId_part().set(1,5);
+                                        shipSelected.getId_part().set(2,6);
                                     }
-                                    setShipAtPosition(parent, prePos, shipSelected, 2);
+                                    else {
+                                        shipSelected.getId_part().set(0,5);
+                                        shipSelected.getId_part().set(1,6);
+                                        shipSelected.getId_part().set(2,4);
+                                    }
+                                    setShipAtPosition(parent,position, shipSelected,0, shipSelected.getId_part().get(0), false);
+                                    setShipAtPosition(parent,nextPost, shipSelected,1, shipSelected.getId_part().get(1), false);
+                                    setShipAtPosition(parent, prePos, shipSelected, 2, shipSelected.getId_part().get(2), false);
                                 }
                                 else {
                                     nextPost = position - 1;
-                                    if(nextPost/5 != position/5){
-                                        nextPost = position+2;
-                                    }
-                                    setShipAtPosition(parent,nextPost, shipSelected,1);
                                     prePos = position + 1;
-                                    if(prePos/5 != position/5){
-                                        prePos = position - 2;
+                                    if(nextPost/5 != position/5 || nextPost == -1){
+                                        nextPost = position+2;
+                                        shipSelected.getId_part().set(0,6);
+                                        shipSelected.getId_part().set(1,4);
+                                        shipSelected.getId_part().set(2,5);
+
                                     }
-                                    setShipAtPosition(parent, prePos, shipSelected, 2);
+                                    else if(prePos/5 != position/5){
+                                        prePos = position - 2;
+                                        shipSelected.getId_part().set(0,4);
+                                        shipSelected.getId_part().set(1,5);
+                                        shipSelected.getId_part().set(2,6);
+                                    }
+                                    else {
+                                        shipSelected.getId_part().set(0,5);
+                                        shipSelected.getId_part().set(1,6);
+                                        shipSelected.getId_part().set(2,4);
+                                    }
+                                    setShipAtPosition(parent,position, shipSelected,0, shipSelected.getId_part().get(0), false);
+                                    setShipAtPosition(parent,nextPost, shipSelected,1, shipSelected.getId_part().get(1), false);
+                                    setShipAtPosition(parent, prePos, shipSelected, 2, shipSelected.getId_part().get(2), false);
                                 }
                                 break;
                             case 4:
-                                setShipAtPosition(parent,position, shipSelected,0);
                                 if(shipSelected.getOrigentation() == 1){
-                                    nextPost = position + 5;
-                                    if(nextPost >= 50){
-                                        nextPost = position - 10;
-                                    }
-                                    setShipAtPosition(parent,nextPost, shipSelected,1);
-                                    prePos = position - 5;
-                                    if(prePos < 0){
-                                        prePos = position + 15;
-                                    }
-                                    setShipAtPosition(parent,prePos, shipSelected,2);
                                     nextPost = position + 10;
-                                    if(nextPost >= 55){
+                                    prePos = position - 5;
+                                    semiNextPost = position + 5;
+                                    if(nextPost >=55){
                                         nextPost = position - 15;
+                                        semiNextPost = position - 10;
+                                        shipSelected.getId_part().set(0,10);
+                                        shipSelected.getId_part().set(1,8);
+                                        shipSelected.getId_part().set(2,9);
+                                        shipSelected.getId_part().set(3,7);
                                     }
                                     else if(nextPost >= 50){
                                         nextPost = position - 10;
+                                        shipSelected.getId_part().set(0,10);
+                                        shipSelected.getId_part().set(1,8);
+                                        shipSelected.getId_part().set(2,9);
+                                        shipSelected.getId_part().set(3,7);
                                     }
-                                    setShipAtPosition(parent,nextPost, shipSelected,3);
+                                    else if(prePos < 0){
+                                        prePos = position + 15;
+                                        shipSelected.getId_part().set(0,7);
+                                        shipSelected.getId_part().set(1,8);
+                                        shipSelected.getId_part().set(2,10);
+                                        shipSelected.getId_part().set(3,9);
+                                    }
+                                    else {
+                                        shipSelected.getId_part().set(0,8);
+                                        shipSelected.getId_part().set(1,9);
+                                        shipSelected.getId_part().set(2,7);
+                                        shipSelected.getId_part().set(3,10);
+                                    }
+                                    setShipAtPosition(parent,position, shipSelected,0, shipSelected.getId_part().get(0), false);
+                                    setShipAtPosition(parent,semiNextPost, shipSelected,1, shipSelected.getId_part().get(1), false);
+                                    setShipAtPosition(parent,prePos, shipSelected,2, shipSelected.getId_part().get(2), false);
+                                    setShipAtPosition(parent,nextPost, shipSelected,3, shipSelected.getId_part().get(3), false);
+
                                 }
                                 else {
-                                    nextPost = position - 1;
-                                    if(nextPost/5 != position/5){
-                                        nextPost = position + 2;
-                                    }
-                                    setShipAtPosition(parent,nextPost, shipSelected,1);
-                                    prePos = position + 1;
-                                    if(prePos/ 5 != position/5){
-                                        prePos = position - 3;
-                                    }
-                                    setShipAtPosition(parent,prePos, shipSelected,2);
                                     nextPost = position - 2;
-                                    if(nextPost/5 != position/5){
-                                        if(nextPost % 5 == 4){
-                                            nextPost = position + 2;
-                                        }
-                                        else {
+                                    prePos = position +1;
+                                    semiNextPost = position - 1;
+                                    if(nextPost/5 != position/5 || nextPost < 0){
+                                        if(nextPost % 5 == 3 || nextPost == -2){
                                             nextPost = position + 3;
+                                            semiNextPost = position + 2;
+                                            shipSelected.getId_part().set(0,10);
+                                            shipSelected.getId_part().set(1,8);
+                                            shipSelected.getId_part().set(2,9);
+                                            shipSelected.getId_part().set(3,7);
+
+                                        }
+                                        else if(nextPost % 5 == 4 || nextPost == -1){
+                                            nextPost = position + 2;
+                                            shipSelected.getId_part().set(0,10);
+                                            shipSelected.getId_part().set(1,8);
+                                            shipSelected.getId_part().set(2,9);
+                                            shipSelected.getId_part().set(3,7);
                                         }
                                     }
-                                    setShipAtPosition(parent,nextPost, shipSelected,3);
+                                    else if(prePos/5 != position /5){
+                                        prePos = position - 3;
+                                        shipSelected.getId_part().set(0,7);
+                                        shipSelected.getId_part().set(1,8);
+                                        shipSelected.getId_part().set(2,10);
+                                        shipSelected.getId_part().set(3,9);
+                                    }
+                                    else {
+                                        shipSelected.getId_part().set(0,8);
+                                        shipSelected.getId_part().set(1,9);
+                                        shipSelected.getId_part().set(2,7);
+                                        shipSelected.getId_part().set(3,10);
+                                    }
+                                    setShipAtPosition(parent,position, shipSelected,0, shipSelected.getId_part().get(0), false);
+                                    setShipAtPosition(parent,semiNextPost, shipSelected,1, shipSelected.getId_part().get(1), false);
+                                    setShipAtPosition(parent,prePos, shipSelected,2, shipSelected.getId_part().get(2), false);
+                                    setShipAtPosition(parent,nextPost, shipSelected,3, shipSelected.getId_part().get(3), false);
                                 }
                                 break;
                         }
@@ -265,7 +341,9 @@ public class PrepareActivity extends AppCompatActivity {
         btnRotation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rotateShip(listShip.get(selectedShip-1));
+                if(isPlaced == 1){
+                    rotateShip(listShip.get(selectedShip-1));
+                }
             }
         });
 
@@ -277,7 +355,19 @@ public class PrepareActivity extends AppCompatActivity {
         });
     }
 
+
+
     private void resetMap() {
+        selectedShip = 0;
+        previousSelectedShip = -1;
+        btnShip111.setEnabled(true);
+        btnShip112.setEnabled(true);
+        btnShip113.setEnabled(true);
+        btnShip121.setEnabled(true);
+        btnShip122.setEnabled(true);
+        btnShip131.setEnabled(true);
+        btnShip141.setEnabled(true);
+        resetSelection();
         itemImageAdapter = new AdapterGridViewMap(this, R.layout.map_cell,arrayBackground);
         grv_board.setAdapter(itemImageAdapter);
         initShip();
@@ -288,7 +378,6 @@ public class PrepareActivity extends AppCompatActivity {
     }
 
     private Runnable timeCountdownThread = new Runnable() {
-        private boolean stop = false;
         @Override
         public void run() {
             timeCountdown = timeCountdown - 1;
@@ -302,9 +391,11 @@ public class PrepareActivity extends AppCompatActivity {
                             shipSelected.getPosition().get(0),
                             grv_board.getAdapter().getItemId(shipSelected.getPosition().get(0)));
                 }
-                stop = true;
+                mHandler.removeCallbacks(this);
             }
-            mHandler.postDelayed(this, 1000);
+            else {
+                mHandler.postDelayed(this, 1000);
+            }
         }
     };
 
@@ -322,44 +413,45 @@ public class PrepareActivity extends AppCompatActivity {
     }
 
     public void initShip(){
+        listShip = new ArrayList<Ship>();
         ArrayList<Integer> id_part = new ArrayList<Integer>();
         ArrayList<Integer> position = new ArrayList<Integer>();
         ArrayList<Boolean> staus = new ArrayList<Boolean>();
-        position.add(-1);
+        position.add(-10);
         staus.add(false);
         id_part.add(1);
         listShip.add(new Ship(id_part, 1, position, staus,1));
 
         id_part = new ArrayList<Integer>();
-        id_part.add(2);
+        id_part.add(1);
         listShip.add(new Ship(id_part, 1, position, staus,1));
         id_part = new ArrayList<Integer>();
-        id_part.add(3);
+        id_part.add(1);
         listShip.add(new Ship(id_part, 1, position, staus,1));
 
         position = new ArrayList<Integer>();
         staus = new ArrayList<Boolean>();
         id_part = new ArrayList<Integer>();
-        id_part.add(4);
-        id_part.add(5);
-        position.add(-1);
-        position.add(-1);
+        id_part.add(1);
+        id_part.add(2);
+        position.add(-10);
+        position.add(-10);
         staus.add(false);
         staus.add(false);
         listShip.add(new Ship(id_part,1, position, staus,2));
         id_part = new ArrayList<Integer>();
-        id_part.add(6);
-        id_part.add(7);
+        id_part.add(2);
+        id_part.add(3);
         listShip.add(new Ship(id_part, 1, position, staus,2));
         position = new ArrayList<Integer>();
         staus = new ArrayList<Boolean>();
         id_part = new ArrayList<Integer>();
-        id_part.add(8);
-        id_part.add(9);
-        id_part.add(10);
-        position.add(-1);
-        position.add(-1);
-        position.add(-1);
+        id_part.add(5);
+        id_part.add(6);
+        id_part.add(4);
+        position.add(-10);
+        position.add(-10);
+        position.add(-10);
         staus.add(false);
         staus.add(false);
         staus.add(false);
@@ -367,14 +459,14 @@ public class PrepareActivity extends AppCompatActivity {
         position = new ArrayList<Integer>();
         staus = new ArrayList<Boolean>();
         id_part = new ArrayList<Integer>();
-        id_part.add(11);
-        id_part.add(12);
-        id_part.add(13);
-        id_part.add(14);
-        position.add(-1);
-        position.add(-1);
-        position.add(-1);
-        position.add(-1);
+        id_part.add(8);
+        id_part.add(9);
+        id_part.add(7);
+        id_part.add(10);
+        position.add(-10);
+        position.add(-10);
+        position.add(-10);
+        position.add(-10);
         staus.add(false);
         staus.add(false);
         staus.add(false);
@@ -433,9 +525,9 @@ public class PrepareActivity extends AppCompatActivity {
             switch (previousSelectedShip){
                 case 1 : btnShip111.setEnabled(false);
                     break;
-                case 2 : btnShip121.setEnabled(false);
+                case 2 : btnShip112.setEnabled(false);
                     break;
-                case 3 : btnShip131.setEnabled(false);
+                case 3 : btnShip113.setEnabled(false);
                     break;
                 case 4 : btnShip121.setEnabled(false);
                     break;
@@ -450,14 +542,37 @@ public class PrepareActivity extends AppCompatActivity {
         }
     }
 
-    public void setShipAtPosition(AdapterView<?> parent, int position, Ship ship, int index){
+    public void setShipAtPosition(AdapterView<?> parent, int position, Ship ship, int index, int value, boolean isRecover){
         View childView=  (View)parent.getChildAt(position);
         TextView textView = childView.findViewById(R.id.cell_grid);
-        textView.setBackgroundResource(R.drawable.ship_1);
+        switch (value){
+            case 1: textView.setBackgroundResource(R.drawable.ship_1);
+                break;
+            case 2: textView.setBackgroundResource(R.drawable.ship_2_1);
+                break;
+            case 3: textView.setBackgroundResource(R.drawable.ship_2_2);
+                break;
+            case 4: textView.setBackgroundResource(R.drawable.ship_3_1);
+                break;
+            case 5: textView.setBackgroundResource(R.drawable.ship_3_2);
+                break;
+            case 6: textView.setBackgroundResource(R.drawable.ship_3_3);
+                break;
+            case 7: textView.setBackgroundResource(R.drawable.ship_4_1);
+                break;
+            case 8: textView.setBackgroundResource(R.drawable.ship_4_2);
+                break;
+            case 9: textView.setBackgroundResource(R.drawable.ship_4_3);
+                break;
+            case 10: textView.setBackgroundResource(R.drawable.ship_4_4);
+                break;
+        }
         ship.getPosition().set(index, position);
         ship.getStatus().set(index, true);
         statusMap[position] +=1;
-        valueMap[position] += ship.getId_part().get(index);
+        if(isRecover == false){
+            valueMap[position] += ship.getId_part().get(index);
+        }
     }
 
     public void deleteShipAtOldPosition(AdapterView<?> parent, int position, Ship ship, int index){
@@ -468,7 +583,7 @@ public class PrepareActivity extends AppCompatActivity {
         statusMap[position] = 0;
         valueMap[position] -= ship.getId_part().get(index);
         if(valueMap[position] > 0){
-            setShipAtPosition(parent, position, ship, index);
+            setShipAtPosition(parent, position, ship, index, valueMap[position], true);
         }
     }
 
