@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     Button btnCreateGame;
     Button btnQuit;
     Button btnJoin;
+    int isRun = 1 ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         btnJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isRun = 0;
                 Intent intent = new Intent(MainActivity.this, JoinGameActivity.class);
                 startActivity(intent);
             }
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         btnCreateGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isRun = 0;
                 Intent intent = new Intent(MainActivity.this, HostGameActivity.class);
                 startActivity(intent);
             }
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isRun = 0;
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 startActivity(intent);
             }
@@ -75,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         btnQuit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isRun = 0;
                 finish();
             }
         });
@@ -119,10 +125,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         dialogInputName.show();
-
-
-
     }
+
+
 
     public void initDatabase(){
         // path to internal memory file system (data/data/cis470.matos.databases)
@@ -327,13 +332,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            index = index < 2 ? index+1 : 0;
-            chageBackground(backgroundImage[index]);
-            mHandler.postDelayed(this, 200);
+            if(isRun == 0){
+                mHandler.removeCallbacks(this);
+            }
+            else {
+                index = index < 2 ? index+1 : 0;
+                chageBackground(backgroundImage[index]);
+                Log.d("my-debuger", "Thread is runing");
+                mHandler.postDelayed(this, 200);
+            }
         }
 
         public void chageBackground(Integer id){
             rootLayout.setBackgroundResource(id);
         }
+
     };
 }

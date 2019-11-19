@@ -45,6 +45,7 @@ public class SettingActivity extends AppCompatActivity {
     String myDbPath;
     User user;
     ArrayList<Item> listItem;
+    ArrayList<Item> listActiveItem;
     ArrayList<BattleHistory> listBattleHistory;
     TextView txtViewUserLevel;
     TextView txtViewUserName;
@@ -64,15 +65,21 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
         user = new User(setting.getUserName(), 0);
         listItem = new ArrayList<Item>();
+        listActiveItem = new ArrayList<Item>();
         listItem = new Helper(getApplication()).getListItem();
         listBattleHistory = new ArrayList<BattleHistory>();
         listBattleHistory = new Helper((getApplication())).getListBattleHistory();
-        listImageId = new Integer[30];
-        listDescriptionId = new Integer[30];
-        for(int i = 0; i<30; i ++){
-            if(i< listItem.size()){
-                listImageId[i] = getResources().getIdentifier(listItem.get(i).getImageName(),"drawable", getPackageName());
-                listDescriptionId[i] = getResources().getIdentifier(listItem.get(i).getImageName(), "string", getPackageName());
+        listImageId = new Integer[22];
+        listDescriptionId = new Integer[22];
+        for(int i =0; i< listItem.size(); i++){
+            if(listItem.get(i).getType()==0){
+                listActiveItem.add(listItem.get(i));
+            }
+        }
+        for(int i = 0; i<22; i ++){
+            if(i< listActiveItem.size()){
+                listImageId[i] = getResources().getIdentifier(listActiveItem.get(i).getImageName(),"drawable", getPackageName());
+                listDescriptionId[i] = getResources().getIdentifier(listActiveItem.get(i).getImageName(), "string", getPackageName());
             }
             else {
                 listImageId[i] = getResources().getIdentifier("unreached_skill", "drawable", getPackageName());
@@ -96,7 +103,7 @@ public class SettingActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         Resources resources = new Resources(getAssets(), metrics, conf);
         viewPager = findViewById(R.id.pager);
-        adapter = new ViewPagerAdapter(getSupportFragmentManager(), resources, listItem, listImageId, listDescriptionId, listBattleHistory , this, getPackageName());
+        adapter = new ViewPagerAdapter(getSupportFragmentManager(), resources, listActiveItem, listImageId, listDescriptionId, listBattleHistory , this, getPackageName());
         viewPager.setAdapter(adapter);
 
         tabLayout= findViewById(R.id.tabs);
