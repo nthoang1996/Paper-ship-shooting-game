@@ -14,7 +14,7 @@
         android:layout_weight="0.5"
         android:textSize="25sp"
         android:gravity="center"
-        android:text="Prepare For Battle!"
+        android:text="@string/prepare_for_battle_text"
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -127,7 +127,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="Rotate"
+                android:text="@string/rotate_text"
                 app:layout_constraintBottom_toTopOf="@+id/btn_ResetLocation"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"/>
@@ -138,12 +138,9 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_margin="8dp"
-                android:text="Reset Location"
+                android:text="@string/reset_location_text"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"/>
-
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
@@ -165,15 +162,16 @@
                 android:layout_height="0dp"
                 android:gravity="center"
                 android:layout_weight="1"
-
-
-                android:text="Time remaining"/>
+                android:text="@string/time_remaining_text"/>
             <TextView
+                android:id="@+id/textViewCountdown"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:gravity="center"
                 android:layout_weight="1"
-                android:text="8"/>
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="60"/>
         </LinearLayout>
 
         <LinearLayout
@@ -189,7 +187,7 @@
                 android:gravity="center"
                 android:layout_margin="8dp"
                 android:layout_weight="7"
-                android:text="Ready"/>
+                android:text="@string/ready_text"/>
 
         </LinearLayout>
 

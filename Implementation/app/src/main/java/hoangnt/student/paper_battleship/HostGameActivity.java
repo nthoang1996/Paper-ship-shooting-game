@@ -2,6 +2,7 @@ package hoangnt.student.paper_battleship;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,14 +21,16 @@ public class HostGameActivity extends AppCompatActivity {
         btnHostGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(HostGameActivity.this, PrepareActivity.class);
+                startActivity(intent);
             }
         });
         btnPracticeWithBot = findViewById(R.id.btnPracticeWithBOT);
         btnPracticeWithBot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(HostGameActivity.this, PrepareActivity.class);
+                startActivity(intent);
             }
         });
         btnBack = findViewById(R.id.btnBack);
