@@ -58,4 +58,9 @@
     <string name="practice_with_bot_text">Chơi với máy</string>
     <string name="back_text">Trở lại</string>
     <string name="join_text">Tham gia</string>
+    <string name="prepare_for_battle_text">Chuẩn bị bắt đầu!</string>
+    <string name="rotate_text">Xoay thuyền</string>
+    <string name="reset_location_text">Tạo lại vị trí</string>
+    <string name="time_remaining_text">Thời gian còn lại</string>
+    <string name="ready_text">Sẵn sàng</string>
 </resources>

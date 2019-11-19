@@ -57,4 +57,9 @@
     <string name="practice_with_bot_text">Practice with bot</string>
     <string name="back_text">Back</string>
     <string name="join_text">Join</string>
+    <string name="prepare_for_battle_text">Prepare For Battle!</string>
+    <string name="rotate_text">Rotate</string>
+    <string name="reset_location_text">Reset Location</string>
+    <string name="time_remaining_text">Time remaining</string>
+    <string name="ready_text">Ready</string>
 </resources>
