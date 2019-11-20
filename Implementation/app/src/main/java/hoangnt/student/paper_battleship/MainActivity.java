@@ -338,7 +338,6 @@ public class MainActivity extends AppCompatActivity {
             else {
                 index = index < 2 ? index+1 : 0;
                 chageBackground(backgroundImage[index]);
-                Log.d("my-debuger", "Thread is runing");
                 mHandler.postDelayed(this, 200);
             }
         }
