@@ -2,7 +2,6 @@ package hoangnt.student.paper_battleship;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,11 +10,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class PrepareActivity extends AppCompatActivity {
     Integer[] arrayBackground;
@@ -34,6 +31,8 @@ public class PrepareActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
     TextView textViewTimeCountdown;
     int timeCountdown = 60;
+    int isRun = 1;
+    LinearLayout layoutMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +49,7 @@ public class PrepareActivity extends AppCompatActivity {
         btnShip122 = (Button)  findViewById(R.id.btn_Ship1x2_2);
         btnShip131 = (Button)  findViewById(R.id.btn_Ship1x3);
         btnShip141 = (Button)  findViewById(R.id.btn_Ship1x4);
+        layoutMap = findViewById(R.id.layoutMap);
         textViewTimeCountdown = (TextView) findViewById(R.id.textViewCountdown);
         arrayBackground= new Integer[50];
         statusMap = new int[50];
@@ -65,6 +65,8 @@ public class PrepareActivity extends AppCompatActivity {
         itemImageAdapter = new AdapterGridViewMap(this, R.layout.map_cell,arrayBackground);
         grv_board.setAdapter(itemImageAdapter);
         initShip();
+        grv_board.setBackgroundColor(Color.TRANSPARENT);
+        changeBackgroundRunable.run();
 
         btnShip111.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -265,9 +267,9 @@ public class PrepareActivity extends AppCompatActivity {
                                     }
                                     else if(nextPost >= 50){
                                         nextPost = position - 10;
-                                        shipSelected.getId_part().set(0,10);
-                                        shipSelected.getId_part().set(1,8);
-                                        shipSelected.getId_part().set(2,9);
+                                        shipSelected.getId_part().set(0,9);
+                                        shipSelected.getId_part().set(1,10);
+                                        shipSelected.getId_part().set(2,8);
                                         shipSelected.getId_part().set(3,7);
                                     }
                                     else if(prePos < 0){
@@ -305,9 +307,9 @@ public class PrepareActivity extends AppCompatActivity {
                                         }
                                         else if(nextPost % 5 == 4 || nextPost == -1){
                                             nextPost = position + 2;
-                                            shipSelected.getId_part().set(0,10);
-                                            shipSelected.getId_part().set(1,8);
-                                            shipSelected.getId_part().set(2,9);
+                                            shipSelected.getId_part().set(0,9);
+                                            shipSelected.getId_part().set(1,10);
+                                            shipSelected.getId_part().set(2,8);
                                             shipSelected.getId_part().set(3,7);
                                         }
                                     }
@@ -578,7 +580,7 @@ public class PrepareActivity extends AppCompatActivity {
     public void deleteShipAtOldPosition(AdapterView<?> parent, int position, Ship ship, int index){
         View childView=  (View)parent.getChildAt(position);
         TextView textView = childView.findViewById(R.id.cell_grid);
-        textView.setBackgroundResource(R.drawable.backgrond_sea);
+        textView.setBackgroundColor(Color.TRANSPARENT);
         ship.getPosition().set(index, position);
         statusMap[position] = 0;
         valueMap[position] -= ship.getId_part().get(index);
@@ -604,4 +606,27 @@ public class PrepareActivity extends AppCompatActivity {
             deleteShipAtOldPosition(parent, oldPosition.get(i), ship, i);
         }
     }
+
+    private Runnable changeBackgroundRunable = new Runnable() {
+        Integer[] backgroundImage = new Integer[] {R.drawable.game_bg_1, R.drawable.game_bg_2, R.drawable.game_bg_3, R.drawable.game_bg_4, R.drawable.game_bg_5, R.drawable.game_bg_4, R.drawable.game_bg_3, R.drawable.game_bg_2, R.drawable.game_bg_1};
+        int index = 0;
+
+        @Override
+        public void run() {
+            if(isRun == 0){
+                mHandler.removeCallbacks(this);
+            }
+            else {
+                index = index < 8 ? index+1 : 0;
+                Log.d("aaa", "" +index);
+                chageBackground(backgroundImage[index]);
+                mHandler.postDelayed(this, 200);
+            }
+        }
+
+        public void chageBackground(Integer id){
+            layoutMap.setBackgroundResource(id);
+        }
+
+    };
 }
