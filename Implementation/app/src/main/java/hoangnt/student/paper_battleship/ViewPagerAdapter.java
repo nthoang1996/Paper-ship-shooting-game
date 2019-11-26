@@ -1,19 +1,13 @@
 package hoangnt.student.paper_battleship;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.WindowManager;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     Context context;

@@ -47,7 +47,7 @@ public class JoinGameActivity extends AppCompatActivity {
 
     BluetoothDevice mBTDevice;
 
-    public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
+    public ArrayList<BluetoothDevice> mBTDevices;
 
     public DeviceListAdapter mDeviceListAdapter;
 
@@ -133,6 +133,7 @@ public class JoinGameActivity extends AppCompatActivity {
 
             if (action.equals(BluetoothDevice.ACTION_FOUND)){
                 BluetoothDevice device = intent.getParcelableExtra (BluetoothDevice.EXTRA_DEVICE);
+                mBTDevices = new ArrayList<>();
                 mBTDevices.add(device);
                 Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress());
                 mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);

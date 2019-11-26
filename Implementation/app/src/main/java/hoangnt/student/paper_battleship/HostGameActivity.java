@@ -15,10 +15,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class HostGameActivity extends AppCompatActivity {
+public class HostGameActivity extends AppCompatActivity implements Serializable {
     private static final String TAG = "MainActivity";
     Button btnHostGame;
     Button btnPracticeWithBot;
@@ -26,7 +27,7 @@ public class HostGameActivity extends AppCompatActivity {
     BluetoothAdapter mBluetoothAdapter;
     Button btnEnableDisable_Discoverable;
     BluetoothConnectionService mBluetoothConnection;
-    public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
+    public ArrayList<BluetoothDevice> mBTDevices;
 
     public DeviceListAdapter mDeviceListAdapter;
 
@@ -112,6 +113,7 @@ public class HostGameActivity extends AppCompatActivity {
 
             if (action.equals(BluetoothDevice.ACTION_FOUND)){
                 BluetoothDevice device = intent.getParcelableExtra (BluetoothDevice.EXTRA_DEVICE);
+                mBTDevices = new ArrayList<>();
                 mBTDevices.add(device);
                 Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress());
                 mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
@@ -137,6 +139,8 @@ public class HostGameActivity extends AppCompatActivity {
                     //inside BroadcastReceiver4
                     mBTDevice = mDevice;
                     Log.d("my-debugger", mDevice.getName());
+                    mBluetoothConnection = new BluetoothConnectionService(HostGameActivity.this);
+                    startConnection();
                     Intent intent_game = new Intent(HostGameActivity.this, PrepareActivity.class);
                     startActivity(intent_game);
                 }
@@ -189,5 +193,18 @@ public class HostGameActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    public void startConnection(){
+        startBTConnection(mBTDevice,MY_UUID_INSECURE);
+    }
+
+    /**
+     * starting chat service method
+     */
+    public void startBTConnection(BluetoothDevice device, UUID uuid){
+        Log.d(TAG, "startBTConnection: Initializing RFCOM Bluetooth Connection.");
+
+        mBluetoothConnection.startClient(device,uuid);
     }
 }

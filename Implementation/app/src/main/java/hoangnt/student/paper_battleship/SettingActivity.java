@@ -106,7 +106,7 @@ public class SettingActivity extends AppCompatActivity {
         adapter = new ViewPagerAdapter(getSupportFragmentManager(), resources, listActiveItem, listImageId, listDescriptionId, listBattleHistory , this, getPackageName());
         viewPager.setAdapter(adapter);
 
-        tabLayout= findViewById(R.id.tabs);
+        tabLayout= findViewById(R.id.tabs1);
         tabLayout.setupWithViewPager(viewPager);
 
         // path to internal memory file system (data/data/cis470.matos.databases)

@@ -4,9 +4,13 @@ import android.app.Application;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Helper {
     SQLiteDatabase db;
@@ -75,5 +79,72 @@ public class Helper {
             db.close();
         }
         return listItem;
+    }
+
+    public Ship[] parseListStringToListShipObject(ArrayList<String> listStr){
+        Ship[] listShip = new Ship[listStr.size()] ;
+        for (int i=0; i< listStr.size(); i++){
+            String strShip = listStr.get(i);
+            String idPartStr = strShip.substring(strShip.indexOf('[')+1, strShip.indexOf(']'));
+            ArrayList<Integer> idPartInt = new ArrayList<Integer>();
+            idPartInt = parseStringToArrayInterger(idPartStr);
+            strShip = strShip.substring(strShip.indexOf(']')+2);
+            String origentationStr = strShip.substring(strShip.indexOf('=')+ 1, strShip.indexOf('=') + 2);
+            strShip = strShip.substring(strShip.indexOf(',')+1);
+            String positionStr = strShip.substring(strShip.indexOf('[')+1, strShip.indexOf(']'));
+            strShip = strShip.substring(strShip.indexOf(']')+2);
+            ArrayList<Integer> positionInt = new ArrayList<Integer>();
+            positionInt = parseStringToArrayInterger(positionStr);
+            String statusStr = strShip.substring(strShip.indexOf('[')+1, strShip.indexOf(']'));
+            strShip = strShip.substring(strShip.indexOf(']')+2);
+            ArrayList<Boolean> statusBoolean = new ArrayList<Boolean>();
+            statusBoolean = parseStringToArrayBoolean(statusStr);
+            String typeStr = strShip.substring(strShip.indexOf('=')+1, strShip.indexOf('=') + 2);
+            listShip[i] = new Ship(idPartInt, Integer.parseInt(origentationStr), positionInt, statusBoolean, Integer.parseInt(typeStr));
+        }
+        return listShip;
+    }
+
+    public ArrayList<Integer> parseStringToArrayInterger(String str){
+        ArrayList<Integer> arrInt = new ArrayList<Integer>();
+        String[] arrStr = str.split(",");
+        for (int i =0 ; i<arrStr.length; i++){
+            arrInt.add(Integer.parseInt(arrStr[i].trim()));
+        }
+        return arrInt;
+    }
+
+    public ArrayList<Boolean> parseStringToArrayBoolean(String str){
+        ArrayList<Boolean> arrBoolean = new ArrayList<Boolean>();
+        String[] arrStr = str.split(",");
+        for (int i =0 ; i<arrStr.length; i++){
+            arrBoolean.add(arrStr[i].trim().equals("true") ? true :false);
+        }
+        return arrBoolean;
+    }
+
+    public void drawShip(TextView tv, int value){
+        switch (value){
+            case 1: tv.setBackgroundResource(R.drawable.ship_1);
+                break;
+            case 2: tv.setBackgroundResource(R.drawable.ship_2_1);
+                break;
+            case 3: tv.setBackgroundResource(R.drawable.ship_2_2);
+                break;
+            case 4: tv.setBackgroundResource(R.drawable.ship_3_1);
+                break;
+            case 5: tv.setBackgroundResource(R.drawable.ship_3_2);
+                break;
+            case 6: tv.setBackgroundResource(R.drawable.ship_3_3);
+                break;
+            case 7: tv.setBackgroundResource(R.drawable.ship_4_1);
+                break;
+            case 8: tv.setBackgroundResource(R.drawable.ship_4_2);
+                break;
+            case 9: tv.setBackgroundResource(R.drawable.ship_4_3);
+                break;
+            case 10: tv.setBackgroundResource(R.drawable.ship_4_4);
+                break;
+        }
     }
 }
