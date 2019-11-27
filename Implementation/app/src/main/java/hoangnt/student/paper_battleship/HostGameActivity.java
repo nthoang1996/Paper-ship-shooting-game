@@ -2,6 +2,7 @@ package hoangnt.student.paper_battleship;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -13,9 +14,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -24,44 +27,6 @@ public class HostGameActivity extends AppCompatActivity implements Serializable 
     Button btnHostGame;
     Button btnPracticeWithBot;
     Button btnBack;
-    BluetoothAdapter mBluetoothAdapter;
-    Button btnEnableDisable_Discoverable;
-    BluetoothConnectionService mBluetoothConnection;
-    public ArrayList<BluetoothDevice> mBTDevices;
-
-    public DeviceListAdapter mDeviceListAdapter;
-
-    ListView lvNewDevices;
-    private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
-    BluetoothDevice mBTDevice;
-
-    // Create a BroadcastReceiver for ACTION_FOUND
-    private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            // When discovery finds a device
-            if (action.equals(mBluetoothAdapter.ACTION_STATE_CHANGED)) {
-                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, mBluetoothAdapter.ERROR);
-
-                switch(state){
-                    case BluetoothAdapter.STATE_OFF:
-                        Log.d(TAG, "onReceive: STATE OFF");
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_OFF:
-                        Log.d(TAG, "mBroadcastReceiver1: STATE TURNING OFF");
-                        break;
-                    case BluetoothAdapter.STATE_ON:
-                        Log.d(TAG, "mBroadcastReceiver1: STATE ON");
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_ON:
-                        Log.d(TAG, "mBroadcastReceiver1: STATE TURNING ON");
-                        break;
-                }
-            }
-        }
-    };
 
     /**
      * Broadcast Receiver for changes made to bluetooth states such as:
@@ -101,60 +66,6 @@ public class HostGameActivity extends AppCompatActivity implements Serializable 
         }
     };
 
-    /**
-     * Broadcast Receiver for listing devices that are not yet paired
-     * -Executed by btnDiscover() method.
-     */
-    private BroadcastReceiver mBroadcastReceiver3 = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            Log.d(TAG, "onReceive: ACTION FOUND.");
-
-            if (action.equals(BluetoothDevice.ACTION_FOUND)){
-                BluetoothDevice device = intent.getParcelableExtra (BluetoothDevice.EXTRA_DEVICE);
-                mBTDevices = new ArrayList<>();
-                mBTDevices.add(device);
-                Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress());
-                mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
-                lvNewDevices.setAdapter(mDeviceListAdapter);
-            }
-        }
-    };
-
-    /**
-     * Broadcast Receiver that detects bond state changes (Pairing status changes)
-     */
-    private final BroadcastReceiver mBroadcastReceiver4 = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-
-            if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)){
-                BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                //3 cases:
-                //case1: bonded already
-                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
-                    Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
-                    //inside BroadcastReceiver4
-                    mBTDevice = mDevice;
-                    Log.d("my-debugger", mDevice.getName());
-                    mBluetoothConnection = new BluetoothConnectionService(HostGameActivity.this);
-                    startConnection();
-                    Intent intent_game = new Intent(HostGameActivity.this, PrepareActivity.class);
-                    startActivity(intent_game);
-                }
-                //case2: creating a bone
-                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
-                    Log.d(TAG, "BroadcastReceiver: BOND_BONDING.");
-                }
-                //case3: breaking a bond
-                if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {
-                    Log.d(TAG, "BroadcastReceiver: BOND_NONE.");
-                }
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,17 +76,15 @@ public class HostGameActivity extends AppCompatActivity implements Serializable 
         btnHostGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-                registerReceiver(mBroadcastReceiver4, filter);
-                mBTDevices = new ArrayList<>();
-                mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
                 Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                 discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
                 startActivity(discoverableIntent);
 
-                IntentFilter intentFilter = new IntentFilter(mBluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+                IntentFilter intentFilter = new IntentFilter(Bluetooth.getmBluetoothAdapter().ACTION_SCAN_MODE_CHANGED);
                 registerReceiver(mBroadcastReceiver2,intentFilter);
+
+                showDialogHostGame();
             }
         });
         btnPracticeWithBot = findViewById(R.id.btnPracticeWithBOT);
@@ -195,16 +104,23 @@ public class HostGameActivity extends AppCompatActivity implements Serializable 
         });
     }
 
-    public void startConnection(){
-        startBTConnection(mBTDevice,MY_UUID_INSECURE);
-    }
+   public void showDialogHostGame(){
+        final Dialog dialogWaiting;
+        dialogWaiting = new Dialog(HostGameActivity.this);
+        dialogWaiting.setContentView(R.layout.waiting_dialog);
 
-    /**
-     * starting chat service method
-     */
-    public void startBTConnection(BluetoothDevice device, UUID uuid){
-        Log.d(TAG, "startBTConnection: Initializing RFCOM Bluetooth Connection.");
-
-        mBluetoothConnection.startClient(device,uuid);
+        Button btnOk = (Button) dialogWaiting.findViewById(R.id.btnOkWaitingDialog);
+        final TextView textViewMsg = (TextView) dialogWaiting.findViewById(R.id.textViewWaitingDialog);
+        btnOk.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               textViewMsg.setText("Waiting for other player...");
+               String str = "hello";
+               Bluetooth.getBluetoothConnection().write(str.getBytes(Charset.defaultCharset()));
+               Intent intent_game = new Intent(HostGameActivity.this, PrepareActivity.class);
+               startActivity(intent_game);
+           }
+       });
+        dialogWaiting.show();
     }
 }

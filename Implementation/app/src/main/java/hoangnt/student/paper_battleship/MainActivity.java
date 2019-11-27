@@ -3,7 +3,12 @@ package hoangnt.student.paper_battleship;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -17,7 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Locale;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     LinearLayout rootLayout;
@@ -31,7 +39,63 @@ public class MainActivity extends AppCompatActivity {
     Button btnQuit;
     Button btnJoin;
     int isRun = 1 ;
+    private static final String TAG = "MainActivity";
+    private static final UUID MY_UUID_INSECURE =
+            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
+    private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (action.equals(Bluetooth.getmBluetoothAdapter().ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, Bluetooth.getmBluetoothAdapter().ERROR);
+
+                switch(state){
+                    case BluetoothAdapter.STATE_OFF:
+                        Log.d(TAG, "onReceive: STATE OFF");
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_OFF:
+                        Log.d(TAG, "mBroadcastReceiver1: STATE TURNING OFF");
+                        break;
+                    case BluetoothAdapter.STATE_ON:
+                        Log.d(TAG, "mBroadcastReceiver1: STATE ON");
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_ON:
+                        Log.d(TAG, "mBroadcastReceiver1: STATE TURNING ON");
+                        break;
+                }
+            }
+        }
+    };
+
+    private final BroadcastReceiver mBroadcastReceiver4 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)){
+                BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                //3 cases:
+                //case1: bonded already
+                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
+                    Log.d(TAG, "BroadcastReceiver: BOND_BONDED." + mDevice.getName());
+                    //inside BroadcastReceiver4
+                    Bluetooth.setBluetoothConection(new BluetoothConnectionService(MainActivity.this));
+                    Bluetooth.setBluetoothDevice(mDevice);
+                    Bluetooth.setIsBound(true);
+                    Bluetooth.startConnection(MY_UUID_INSECURE, MainActivity.this);
+                }
+                //case2: creating a bone
+                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
+                    Log.d(TAG, "BroadcastReceiver: BOND_BONDING.");
+                }
+                //case3: breaking a bond
+                if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {
+                    Log.d(TAG, "BroadcastReceiver: BOND_NONE.");
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +104,13 @@ public class MainActivity extends AppCompatActivity {
         setting = new Helper(getApplication()).getSetting();
         setLocale(setting.getLanguage());
         setContentView(R.layout.activity_main);
+
+        //Init bluetooth
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(mBroadcastReceiver4, filter);
+        Bluetooth.setmBluetoothAdapter(BluetoothAdapter.getDefaultAdapter());
+        requestBluetooth();
+
         rootLayout = findViewById(R.id.root_layout);
         btnCreateGame = findViewById(R.id.btnHost);
         btnJoin = findViewById(R.id.btnJoin);
@@ -84,6 +155,20 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    public void requestBluetooth(){
+        if(Bluetooth.getmBluetoothAdapter() == null){
+            Log.d(TAG, "enableDisableBT: Does not have BT capabilities.");
+        }
+        if(!Bluetooth.getmBluetoothAdapter().isEnabled()){
+            Log.d(TAG, "enableDisableBT: enabling BT.");
+            Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivity(enableBTIntent);
+
+            IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+            registerReceiver(mBroadcastReceiver1, BTIntent);
+        }
     }
 
     public void showDialog(View v){

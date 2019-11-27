@@ -24,7 +24,7 @@ public class BluetoothConnectionService {
     private static final String appName = "MYAPP";
 
     private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     private final BluetoothAdapter mBluetoothAdapter;
     Context mContext;
@@ -134,7 +134,9 @@ public class BluetoothConnectionService {
             } catch (IOException e) {
                 Log.e(TAG, "ConnectThread: Could not create InsecureRfcommSocket " + e.getMessage());
             }
-
+            if (tmp == null) {
+                Log.e("NULL EXCEPTION", "mmSocket is null!");
+            }
             mmSocket = tmp;
 
             // Always cancel discovery because it will slow down a connection
@@ -204,7 +206,7 @@ public class BluetoothConnectionService {
         //initprogress dialog
         mProgressDialog = ProgressDialog.show(mContext,"Connecting Bluetooth"
                 ,"Please Wait...",true);
-
+        Log.d("startClient", "NULL DEVICE : " + device.getName());
         mConnectThread = new ConnectThread(device, uuid);
         mConnectThread.start();
     }
@@ -240,6 +242,9 @@ public class BluetoothConnectionService {
                 e.printStackTrace();
             }
 
+            if (tmpIn == null) {
+                Log.e("Error - ", "Cannot init input stream");
+            }
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
@@ -299,8 +304,10 @@ public class BluetoothConnectionService {
     public void write(byte[] out) {
         // Create temporary object
         ConnectedThread r;
-        if (out != null) {
+        try {
             mConnectedThread.write(out);
+        }catch (Exception ex){
+            Log.d("My-ex", ex.getMessage());
         }
         // Synchronize a copy of the ConnectedThread
         Log.d(TAG, "write: Write Called.");

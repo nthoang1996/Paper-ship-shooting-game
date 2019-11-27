@@ -32,93 +32,12 @@ public class JoinGameActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    BluetoothAdapter mBluetoothAdapter;
-    Button btnEnableDisable_Discoverable;
-
-    BluetoothConnectionService mBluetoothConnection;
-
-    Button btnStartConnection;
-    Button btnSend;
-
-    EditText etSend;
-
-    private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
-    BluetoothDevice mBTDevice;
-
     public ArrayList<BluetoothDevice> mBTDevices;
 
     public DeviceListAdapter mDeviceListAdapter;
 
     ListView lvNewDevices;
     int selectedDevice;
-
-    // Create a BroadcastReceiver for ACTION_FOUND
-    private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            // When discovery finds a device
-            if (action.equals(mBluetoothAdapter.ACTION_STATE_CHANGED)) {
-                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, mBluetoothAdapter.ERROR);
-
-                switch(state){
-                    case BluetoothAdapter.STATE_OFF:
-                        Log.d(TAG, "onReceive: STATE OFF");
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_OFF:
-                        Log.d(TAG, "mBroadcastReceiver1: STATE TURNING OFF");
-                        break;
-                    case BluetoothAdapter.STATE_ON:
-                        Log.d(TAG, "mBroadcastReceiver1: STATE ON");
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_ON:
-                        Log.d(TAG, "mBroadcastReceiver1: STATE TURNING ON");
-                        break;
-                }
-            }
-        }
-    };
-
-    /**
-     * Broadcast Receiver for changes made to bluetooth states such as:
-     * 1) Discoverability mode on/off or expire.
-     */
-    private final BroadcastReceiver mBroadcastReceiver2 = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-
-            if (action.equals(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)) {
-
-                int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.ERROR);
-
-                switch (mode) {
-                    //Device is in Discoverable Mode
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                        Log.d(TAG, "mBroadcastReceiver2: Discoverability Enabled.");
-                        break;
-                    //Device not in discoverable mode
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                        Log.d(TAG, "mBroadcastReceiver2: Discoverability Disabled. Able to receive connections.");
-                        break;
-                    case BluetoothAdapter.SCAN_MODE_NONE:
-                        Log.d(TAG, "mBroadcastReceiver2: Discoverability Disabled. Not able to receive connections.");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTING:
-                        Log.d(TAG, "mBroadcastReceiver2: Connecting....");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTED:
-                        Log.d(TAG, "mBroadcastReceiver2: Connected.");
-                        break;
-                }
-
-            }
-        }
-    };
-
-
 
 
     /**
@@ -142,37 +61,6 @@ public class JoinGameActivity extends AppCompatActivity {
         }
     };
 
-    /**
-     * Broadcast Receiver that detects bond state changes (Pairing status changes)
-     */
-    private final BroadcastReceiver mBroadcastReceiver4 = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-
-            if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)){
-                BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                //3 cases:
-                //case1: bonded already
-                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
-                    Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
-                    //inside BroadcastReceiver4
-                    mBTDevice = mDevice;
-                    Log.d("my-debugger", mDevice.getName());
-                    Intent intent_game = new Intent(JoinGameActivity.this, PrepareActivity.class);
-                    startActivity(intent_game);
-                }
-                //case2: creating a bone
-                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
-                    Log.d(TAG, "BroadcastReceiver: BOND_BONDING.");
-                }
-                //case3: breaking a bond
-                if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {
-                    Log.d(TAG, "BroadcastReceiver: BOND_NONE.");
-                }
-            }
-        }
-    };
 
     /**
      * This method is required for all devices running API23+
@@ -199,25 +87,23 @@ public class JoinGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_game);
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        if(mBluetoothAdapter.isDiscovering()){
-            mBluetoothAdapter.cancelDiscovery();
+        if(Bluetooth.getmBluetoothAdapter().isDiscovering()){
+            Bluetooth.getmBluetoothAdapter().cancelDiscovery();
             Log.d(TAG, "btnDiscover: Canceling discovery.");
 
             //check BT permissions in manifest
             checkBTPermissions();
 
-            mBluetoothAdapter.startDiscovery();
+            Bluetooth.getmBluetoothAdapter().startDiscovery();
             IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
         }
-        if(!mBluetoothAdapter.isDiscovering()){
+        if(!Bluetooth.getmBluetoothAdapter().isDiscovering()){
 
             //check BT permissions in manifest
             checkBTPermissions();
 
-            mBluetoothAdapter.startDiscovery();
+            Bluetooth.getmBluetoothAdapter().startDiscovery();
             IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
         }
@@ -227,7 +113,7 @@ public class JoinGameActivity extends AppCompatActivity {
         lvNewDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedDevice = position;
+                selectedDevice = 0;
             }
         });
         btnJoinGame = findViewById(R.id.btnJoinGame);
@@ -235,9 +121,7 @@ public class JoinGameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //first cancel discovery because its very memory intensive.
-                mBluetoothAdapter.cancelDiscovery();
-                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-                registerReceiver(mBroadcastReceiver4, filter);
+                Bluetooth.getmBluetoothAdapter().cancelDiscovery();
 
                 Log.d(TAG, "onItemClick: You Clicked on a device.");
                 String deviceName = mBTDevices.get(selectedDevice).getName();
@@ -252,8 +136,7 @@ public class JoinGameActivity extends AppCompatActivity {
                     Log.d(TAG, "Trying to pair with " + deviceName);
                     mBTDevices.get(selectedDevice).createBond();
 
-                    mBTDevice = mBTDevices.get(selectedDevice);
-                    mBluetoothConnection = new BluetoothConnectionService(JoinGameActivity.this);
+                    Bluetooth.setBluetoothDevice(mBTDevices.get(selectedDevice));
                 }
             }
         });
