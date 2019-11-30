@@ -71,11 +71,18 @@ public class JoinGameActivity extends AppCompatActivity {
      */
     private void checkBTPermissions() {
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-            int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
-            permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+            int permissionCheck = 0;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+            }
             if (permissionCheck != 0) {
 
-                this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001); //Any number
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001); //Any number
+                }
             }
         }else{
             Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
@@ -113,7 +120,7 @@ public class JoinGameActivity extends AppCompatActivity {
         lvNewDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedDevice = 0;
+                selectedDevice = position;
             }
         });
         btnJoinGame = findViewById(R.id.btnJoinGame);
@@ -138,6 +145,9 @@ public class JoinGameActivity extends AppCompatActivity {
 
                     Bluetooth.setBluetoothDevice(mBTDevices.get(selectedDevice));
                 }
+                Intent intent_game = new Intent(JoinGameActivity.this, PrepareActivity.class);
+                intent_game.putExtra("Mode", "1");
+                startActivity(intent_game);
             }
         });
         btnBack = findViewById(R.id.btnBack);

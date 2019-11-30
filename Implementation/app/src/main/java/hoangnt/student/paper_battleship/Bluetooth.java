@@ -12,6 +12,15 @@ public class Bluetooth {
     public static BluetoothConnectionService mBluetoothConnection;
     public static BluetoothAdapter mBluetoothAdapter;
     public static Boolean isBond = false;
+    public static String dataSending = "";
+
+    public static String getDataSending() {
+        return dataSending;
+    }
+
+    public static void setDataSending(String dataSending) {
+        Bluetooth.dataSending = dataSending;
+    }
 
     public static Boolean getIsBond() {
         return isBond;

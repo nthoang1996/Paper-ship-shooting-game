@@ -109,16 +109,21 @@ public class HostGameActivity extends AppCompatActivity implements Serializable 
         dialogWaiting = new Dialog(HostGameActivity.this);
         dialogWaiting.setContentView(R.layout.waiting_dialog);
 
-        Button btnOk = (Button) dialogWaiting.findViewById(R.id.btnOkWaitingDialog);
+        final Button btnOk = (Button) dialogWaiting.findViewById(R.id.btnOkWaitingDialog);
         final TextView textViewMsg = (TextView) dialogWaiting.findViewById(R.id.textViewWaitingDialog);
         btnOk.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               textViewMsg.setText("Waiting for other player...");
-               String str = "hello";
-               Bluetooth.getBluetoothConnection().write(str.getBytes(Charset.defaultCharset()));
-               Intent intent_game = new Intent(HostGameActivity.this, PrepareActivity.class);
-               startActivity(intent_game);
+               if(Bluetooth.isBond){
+                   textViewMsg.setText("The enemy is spotted. Ready to fight");
+                   btnOk.setVisibility(View.INVISIBLE);
+                   Intent intent_game = new Intent(HostGameActivity.this, PrepareActivity.class);
+                   intent_game.putExtra("Mode", "1");
+                   startActivity(intent_game);
+               }else{
+                   textViewMsg.setText("There is no enemy around you!");
+                   textViewMsg.setText("Continue finding!");
+               }
            }
        });
         dialogWaiting.show();

@@ -8,14 +8,17 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public class PrepareActivity extends AppCompatActivity implements Serializable {
@@ -24,6 +27,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
     Button btnShip111, btnShip112, btnShip113, btnShip121, btnShip122, btnShip131, btnShip141;
     Button btnResetMap;
     Button btnReady;
+    TextView tvCheckReadyOfYou, tvCheckReadyOfYourEnemy;
     AdapterGridViewMap itemImageAdapter;
     Ship[] listShip;
     int selectedShip = -1;
@@ -37,6 +41,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
     LinearLayout layoutMap;
     int[] statusMap;
     BluetoothConnectionService mBluetoothConnection;
+    Boolean isReady;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +59,18 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         btnShip131 = (Button)  findViewById(R.id.btn_Ship1x3);
         btnShip141 = (Button)  findViewById(R.id.btn_Ship1x4);
         btnReady = (Button) findViewById(R.id.btnReady);
+        tvCheckReadyOfYou = findViewById(R.id.checkReadyofYou);
+        tvCheckReadyOfYourEnemy = findViewById(R.id.checkReadyofYourEnemy);
         layoutMap = findViewById(R.id.layoutMap);
+        final int mode = Integer.parseInt(getIntent().getStringExtra("Mode"));
+        if (mode != 1){
+            tvCheckReadyOfYou.setVisibility(View.INVISIBLE);
+            tvCheckReadyOfYourEnemy.setVisibility(View.INVISIBLE);
+        }
+        else{
+            tvCheckReadyOfYou.setBackgroundColor(Color.RED);
+            tvCheckReadyOfYourEnemy.setBackgroundColor(Color.RED);
+        }
         mBluetoothConnection = (BluetoothConnectionService) getIntent().getSerializableExtra("myBT");
 
         textViewTimeCountdown = (TextView) findViewById(R.id.textViewCountdown);
@@ -66,12 +82,14 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         }
         timeCountdownThread.run();
         listShip = new Ship[7];
+        isReady = false;
 
         itemImageAdapter = new AdapterGridViewMap(this, R.layout.map_cell, listShip);
         grv_board.setAdapter(itemImageAdapter);
         initShip();
         grv_board.setBackgroundColor(Color.TRANSPARENT);
         changeBackgroundRunable.run();
+        listenerRunable.run();
 
         btnShip111.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,9 +184,17 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     listData.add(listShip[i].toString());
                 }
                 isRun = 0;
-                Intent intent = new Intent(PrepareActivity.this, InGameActivity.class);
-                intent.putExtra("listShip", listData);
-                startActivity(intent);
+                if(mode != 1){
+                    Intent intent = new Intent(PrepareActivity.this, InGameActivity.class);
+                    intent.putExtra("listShip", listData);
+                    startActivity(intent);
+                }
+                else{
+                    isReady = true;
+                    Log.d("My-debuger", isReady.toString());
+                    String data= "(Ready)1";
+                    Bluetooth.getBluetoothConnection().write(data.getBytes(Charset.defaultCharset()));
+                }
             }
         });
 
@@ -636,6 +662,30 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         public void chageBackground(Integer id){
             grv_board.setBackgroundResource(id);
         }
+    };
 
+    private Runnable listenerRunable = new Runnable() {
+        @Override
+        public void run() {
+            if(isRun == 0){
+                mHandler.removeCallbacks(this);
+            }
+            else {
+                Log.d("My-debuger", isReady.toString());
+                if(!Bluetooth.getDataSending().isEmpty() && isReady){
+                    isRun = 0;
+;                    Intent intent = new Intent(PrepareActivity.this, InGameActivity.class);
+                    intent.putExtra("Mode", "1");
+                    startActivity(intent);
+                }
+                else if(!Bluetooth.getDataSending().isEmpty()){
+                    tvCheckReadyOfYourEnemy.setBackgroundColor(Color.GREEN);
+                }
+                else if(isReady){
+                    tvCheckReadyOfYou.setBackgroundColor(Color.GREEN);
+                }
+                mHandler.postDelayed(this, 200);
+            }
+        }
     };
 }
