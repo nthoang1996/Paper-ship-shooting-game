@@ -699,6 +699,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     intent.putExtra("listShip", listData);
                     intent.putExtra("listEnemyShip", enemeyData);
                     intent.putExtra("isHost", getIntent().getStringExtra("isHost"));
+                    Bluetooth.setDataSending("");
                     startActivity(intent);
                 }
                 else if(!Bluetooth.getDataSending().isEmpty()){

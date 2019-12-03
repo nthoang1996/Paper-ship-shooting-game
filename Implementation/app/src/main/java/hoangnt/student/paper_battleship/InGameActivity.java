@@ -2,6 +2,7 @@ package hoangnt.student.paper_battleship;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -41,6 +42,9 @@ public class InGameActivity extends TabActivity {
         btnYourMap = findViewById(R.id.btnYourMap);
         btnEnemyMap = findViewById(R.id.btnEnemyMap);
 
+        btnEnemyMap.setBackgroundColor(Color.BLUE);
+        btnYourMap.setBackgroundResource(android.R.drawable.btn_default);
+
         tabContent = (FrameLayout) findViewById(android.R.id.tabcontent);
 
         tabHost = getTabHost();
@@ -68,11 +72,9 @@ public class InGameActivity extends TabActivity {
         changeBackgroundRunable.run();
 
         if(getIntent().getStringExtra("isHost").equals("0")){
-            textViewTurn.setText(R.string.enemy_turn);
             Bluetooth.setYourTurn(false);
         }
         else{
-            textViewTurn.setText(R.string.your_turn);
             Bluetooth.setYourTurn(true);
         }
     }
@@ -83,9 +85,13 @@ public class InGameActivity extends TabActivity {
         if (target.getId() == R.id.btnEnemyMap) {
             tabHost.setCurrentTab(0);
             btnEnemyMap.setSelected(true);
+            btnEnemyMap.setBackgroundColor(Color.BLUE);
+            btnYourMap.setBackgroundResource(android.R.drawable.btn_default);
         } else if (target.getId() == R.id.btnYourMap) {
             tabHost.setCurrentTab(1);
             btnYourMap.setSelected(true);
+            btnYourMap.setBackgroundColor(Color.BLUE);
+            btnEnemyMap.setBackgroundResource(android.R.drawable.btn_default);
         }
     }
 
@@ -101,6 +107,12 @@ public class InGameActivity extends TabActivity {
             else {
                 index = index < 8 ? index+1 : 0;
                 chageBackground(backgroundImage[index]);
+                if(Bluetooth.getYourTurn()){
+                    textViewTurn.setText(R.string.your_turn);
+                }
+                else {
+                    textViewTurn.setText(R.string.enemy_turn);
+                }
                 mHandler.postDelayed(this, 200);
             }
         }
