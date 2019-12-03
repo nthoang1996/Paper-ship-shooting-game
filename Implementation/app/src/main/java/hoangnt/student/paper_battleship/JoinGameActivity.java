@@ -3,7 +3,6 @@ package hoangnt.student.paper_battleship;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,15 +15,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class JoinGameActivity extends AppCompatActivity {
-    ListView listViewPlayer;
     Button btnJoinGame;
     Button btnBack;
     ArrayAdapter<String> adapter;
@@ -145,8 +139,10 @@ public class JoinGameActivity extends AppCompatActivity {
 
                     Bluetooth.setBluetoothDevice(mBTDevices.get(selectedDevice));
                 }
+
                 Intent intent_game = new Intent(JoinGameActivity.this, PrepareActivity.class);
                 intent_game.putExtra("Mode", "1");
+                intent_game.putExtra("isHost", "0");
                 startActivity(intent_game);
             }
         });

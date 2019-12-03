@@ -62,7 +62,15 @@
     <string name="reset_location_text">Reset Location</string>
     <string name="time_remaining_text">Time remaining</string>
     <string name="ready_text">Ready</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="enemy_spotted">The enemy is spotted. Ready to fight!</string>
+    <string name="no_enemy">There is no enemy around you!</string>
+    <string name="continue_find">Continue finding!</string>
+    <string name="find_enemy">Looking for enemy around you.</string>
+    <string name="your_turn">Your turn</string>
+    <string name="enemy_turn">Enemy turn</string>
+    <string name="enemy_map">Enemy map</string>
+    <string name="your_map">Your map</string>
+    <string name="spell_text">Spell</string>
+    <string name="surrender_text">Surrender</string>
+    <string name="menu_text">Menu</string>
 </resources>

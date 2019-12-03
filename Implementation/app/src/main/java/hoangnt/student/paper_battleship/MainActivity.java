@@ -20,10 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import java.io.File;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.UUID;
 

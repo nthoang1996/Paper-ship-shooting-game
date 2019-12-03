@@ -14,7 +14,6 @@
         android:layout_weight="0.5"
         android:textSize="25sp"
         android:gravity="center"
-        android:text="Your turn"
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,7 +62,7 @@
                             android:layout_height="wrap_content"
                             android:onClick="tabHandler"
                             android:textSize="10sp"
-                            android:text="Enemy map" />
+                            android:text="@string/enemy_map" />
 
                         <Button
                             android:id="@+id/btnYourMap"
@@ -71,13 +70,13 @@
                             android:layout_height="wrap_content"
                             android:textSize="10sp"
                             android:onClick="tabHandler"
-                            android:text="Your map" />
+                            android:text="@string/your_map" />
 
                         <TextView
                             android:layout_marginTop="10dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="SPELL"
+                            android:text="@string/spell_text"
                             android:textStyle="bold"
                             android:textSize="25sp"
                             android:gravity="center"/>
@@ -161,7 +160,7 @@
                 android:textSize="10sp"
                 android:layout_margin="8dp"
                 android:layout_weight="4"
-                android:text="Surrender"/>
+                android:text="@string/surrender_text"/>
 
             <Button
                 android:id="@+id/btnMenu"
@@ -171,7 +170,7 @@
                 android:layout_margin="8dp"
                 android:layout_weight="4"
                 android:textSize="10sp"
-                android:text="menu"/>
+                android:text="@string/menu_text"/>
 
         </LinearLayout>
 

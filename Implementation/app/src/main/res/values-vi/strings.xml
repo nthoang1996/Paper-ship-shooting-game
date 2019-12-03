@@ -63,4 +63,15 @@
     <string name="reset_location_text">Tạo lại vị trí</string>
     <string name="time_remaining_text">Thời gian còn lại</string>
     <string name="ready_text">Sẵn sàng</string>
+    <string name="enemy_spotted">Có kẻ địch tấn công, Sẵn sàng chiến đấu!</string>
+    <string name="no_enemy">Không tìm thấy hạm đội nào gần đây!</string>
+    <string name="continue_find">Tiếp tục tìm kiếm!</string>
+    <string name="find_enemy">Tìm kiếm các kẻ địch xung quanh.</string>
+    <string name="your_turn">Lượt của bạn</string>
+    <string name="enemy_turn">Lượt phe địch</string>
+    <string name="enemy_map">Địa thế địch</string>
+    <string name="your_map">Địa thế của ta</string>
+    <string name="spell_text">Kỹ năng</string>
+    <string name="surrender_text">Đầu hàng</string>
+    <string name="menu_text">Tùy chọn khác</string>
 </resources>

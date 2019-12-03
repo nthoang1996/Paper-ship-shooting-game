@@ -13,6 +13,15 @@ public class Bluetooth {
     public static BluetoothAdapter mBluetoothAdapter;
     public static Boolean isBond = false;
     public static String dataSending = "";
+    public static Boolean yourTurn = false;
+
+    public static Boolean getYourTurn() {
+        return yourTurn;
+    }
+
+    public static void setYourTurn(Boolean yourTurn) {
+        Bluetooth.yourTurn = yourTurn;
+    }
 
     public static String getDataSending() {
         return dataSending;

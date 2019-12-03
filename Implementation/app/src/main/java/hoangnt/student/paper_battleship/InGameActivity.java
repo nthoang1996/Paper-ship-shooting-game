@@ -1,29 +1,18 @@
 package hoangnt.student.paper_battleship;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
 import android.app.TabActivity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TabHost;
-import android.widget.TabWidget;
 import android.widget.TextView;
-
-import com.google.android.material.tabs.TabLayout;
-
 import java.util.ArrayList;
 
 public class InGameActivity extends TabActivity {
-    private ViewPager viewPager;
     private TabHost tabHost;
     private FrameLayout tabContent;
     TextView textViewTurn;
@@ -33,7 +22,6 @@ public class InGameActivity extends TabActivity {
     Button btnMenu;
     Button btnYourMap;
     Button btnEnemyMap;
-    Button artistButton, songButton, videosButton;
 
     private Handler mHandler = new Handler();
     int isRun = 1;
@@ -56,10 +44,13 @@ public class InGameActivity extends TabActivity {
         tabContent = (FrameLayout) findViewById(android.R.id.tabcontent);
 
         tabHost = getTabHost();
+        ArrayList<String> listEnemyData =  getIntent().getStringArrayListExtra("listEnemyShip");
         TabHost.TabSpec EnemySpec = tabHost.newTabSpec("Enemy map");
         EnemySpec.setIndicator("Enemy map");
-        Intent EnemyIntent = new Intent(this, PlayerMap.class);
-        EnemySpec.setContent(EnemyIntent);
+        Intent enemyIntent = new Intent(this, PlayerMap.class);
+        enemyIntent.putStringArrayListExtra("listShip", listEnemyData);
+        enemyIntent.putExtra("Map", "Enemy");
+        EnemySpec.setContent(enemyIntent);
 
         ArrayList<String> listData =  getIntent().getStringArrayListExtra("listShip");
         TabHost.TabSpec yourSpec = tabHost.newTabSpec("Your map");
@@ -67,6 +58,7 @@ public class InGameActivity extends TabActivity {
         Intent yourIntent = new Intent();
         yourIntent.setClass(this, PlayerMap.class);
         yourIntent.putStringArrayListExtra("listShip", listData);
+        yourIntent.putExtra("Map", "Your");
         yourSpec.setContent(yourIntent);
 
 
@@ -74,6 +66,15 @@ public class InGameActivity extends TabActivity {
         tabHost.addTab(yourSpec);
 
         changeBackgroundRunable.run();
+
+        if(getIntent().getStringExtra("isHost").equals("0")){
+            textViewTurn.setText(R.string.enemy_turn);
+            Bluetooth.setYourTurn(false);
+        }
+        else{
+            textViewTurn.setText(R.string.your_turn);
+            Bluetooth.setYourTurn(true);
+        }
     }
 
     public void tabHandler(View target) {

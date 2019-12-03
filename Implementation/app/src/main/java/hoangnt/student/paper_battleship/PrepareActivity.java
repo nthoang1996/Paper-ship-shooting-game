@@ -2,21 +2,18 @@ package hoangnt.student.paper_battleship;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -62,6 +59,8 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         tvCheckReadyOfYou = findViewById(R.id.checkReadyofYou);
         tvCheckReadyOfYourEnemy = findViewById(R.id.checkReadyofYourEnemy);
         layoutMap = findViewById(R.id.layoutMap);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         final int mode = Integer.parseInt(getIntent().getStringExtra("Mode"));
         if (mode != 1){
             tvCheckReadyOfYou.setVisibility(View.INVISIBLE);
@@ -183,16 +182,19 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                 for (int i=0; i<listShip.length; i++){
                     listData.add(listShip[i].toString());
                 }
-                isRun = 0;
                 if(mode != 1){
+                    isRun = 0;
                     Intent intent = new Intent(PrepareActivity.this, InGameActivity.class);
                     intent.putExtra("listShip", listData);
                     startActivity(intent);
                 }
                 else{
-                    isReady = true;
-                    Log.d("My-debuger", isReady.toString());
-                    String data= "(Ready)1";
+                    isReady= true;
+                    String data= "";
+                    for(int i =0; i < listData.size(); i++)
+                    {
+                        data = data + listData.get(i) + "-------";
+                    }
                     Bluetooth.getBluetoothConnection().write(data.getBytes(Charset.defaultCharset()));
                 }
             }
@@ -426,21 +428,29 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
     private Runnable timeCountdownThread = new Runnable() {
         @Override
         public void run() {
-            timeCountdown = timeCountdown - 1;
-            textViewTimeCountdown.setText("" + timeCountdown);
-            if(timeCountdown <= 0){
-                if(isDuplicatedShip()){
-                    Ship shipSelected = listShip[selectedShip];
-                    forceDeleteShip = 1;
-                    grv_board.performItemClick(
-                            grv_board.getAdapter().getView(shipSelected.getPosition().get(0), null, null),
-                            shipSelected.getPosition().get(0),
-                            grv_board.getAdapter().getItemId(shipSelected.getPosition().get(0)));
+            if(Bluetooth.getIsBond() || getIntent().getStringExtra("Mode").equals("0")){
+                if(timeCountdown == 60){
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 }
-                mHandler.removeCallbacks(this);
+                timeCountdown = timeCountdown - 1;
+                textViewTimeCountdown.setText("" + timeCountdown);
+                if(timeCountdown <= 0){
+                    if(isDuplicatedShip()){
+                        Ship shipSelected = listShip[selectedShip];
+                        forceDeleteShip = 1;
+                        grv_board.performItemClick(
+                                grv_board.getAdapter().getView(shipSelected.getPosition().get(0), null, null),
+                                shipSelected.getPosition().get(0),
+                                grv_board.getAdapter().getItemId(shipSelected.getPosition().get(0)));
+                    }
+                    mHandler.removeCallbacks(this);
+                }
+                else{
+                    mHandler.postDelayed(this, 1000);
+                }
             }
             else {
-                mHandler.postDelayed(this, 1000);
+                mHandler.postDelayed(this, 200);
             }
         }
     };
@@ -671,11 +681,24 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                 mHandler.removeCallbacks(this);
             }
             else {
-                Log.d("My-debuger", isReady.toString());
                 if(!Bluetooth.getDataSending().isEmpty() && isReady){
                     isRun = 0;
-;                    Intent intent = new Intent(PrepareActivity.this, InGameActivity.class);
+                    Intent intent = new Intent(PrepareActivity.this, InGameActivity.class);
                     intent.putExtra("Mode", "1");
+                    String data = Bluetooth.getDataSending();
+                    Log.d("My-debuger", data);
+                    ArrayList<String> enemeyData = new ArrayList<String>();
+                    while (data.indexOf("-------")!= -1){
+                        enemeyData.add(data.substring(0, data.indexOf("-------")));
+                        data =data.substring(data.indexOf("-------") + 7);
+                    }
+                    ArrayList<String> listData = new ArrayList<String>();
+                    for (int i=0; i<listShip.length; i++){
+                        listData.add(listShip[i].toString());
+                    }
+                    intent.putExtra("listShip", listData);
+                    intent.putExtra("listEnemyShip", enemeyData);
+                    intent.putExtra("isHost", getIntent().getStringExtra("isHost"));
                     startActivity(intent);
                 }
                 else if(!Bluetooth.getDataSending().isEmpty()){

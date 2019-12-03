@@ -32,13 +32,11 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class SettingActivity extends AppCompatActivity {
-//    private Toolbar toolbar;
     private ViewPager viewPager;
     private ViewPagerAdapter adapter;
     private TabLayout tabLayout;
     ArrayList<Language> listLanguage;
     String imageLanguage;
-    ArrayList<String> numberlist = new ArrayList<String >();
     SQLiteDatabase db;
     ImageButton imgCurrentLanguage;
     File storagePath;

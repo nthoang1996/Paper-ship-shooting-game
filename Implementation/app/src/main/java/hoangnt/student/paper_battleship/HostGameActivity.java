@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,14 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.UUID;
 
 public class HostGameActivity extends AppCompatActivity implements Serializable {
     private static final String TAG = "MainActivity";
@@ -92,6 +85,7 @@ public class HostGameActivity extends AppCompatActivity implements Serializable 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HostGameActivity.this, PrepareActivity.class);
+                intent.putExtra("Mode", "0");
                 startActivity(intent);
             }
         });
@@ -115,14 +109,15 @@ public class HostGameActivity extends AppCompatActivity implements Serializable 
            @Override
            public void onClick(View v) {
                if(Bluetooth.isBond){
-                   textViewMsg.setText("The enemy is spotted. Ready to fight");
+                   textViewMsg.setText(R.string.enemy_spotted);
                    btnOk.setVisibility(View.INVISIBLE);
                    Intent intent_game = new Intent(HostGameActivity.this, PrepareActivity.class);
                    intent_game.putExtra("Mode", "1");
+                   intent_game.putExtra("isHost", "1");
                    startActivity(intent_game);
                }else{
-                   textViewMsg.setText("There is no enemy around you!");
-                   textViewMsg.setText("Continue finding!");
+                   textViewMsg.setText(R.string.no_enemy);
+                   textViewMsg.setText(R.string.continue_find);
                }
            }
        });

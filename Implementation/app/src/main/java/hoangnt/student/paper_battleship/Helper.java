@@ -4,13 +4,9 @@ import android.app.Application;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.TextView;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Helper {
     SQLiteDatabase db;
@@ -85,6 +81,7 @@ public class Helper {
         Ship[] listShip = new Ship[listStr.size()] ;
         for (int i=0; i< listStr.size(); i++){
             String strShip = listStr.get(i);
+            Log.d("My-debuger", strShip);
             String idPartStr = strShip.substring(strShip.indexOf('[')+1, strShip.indexOf(']'));
             ArrayList<Integer> idPartInt = new ArrayList<Integer>();
             idPartInt = parseStringToArrayInterger(idPartStr);
