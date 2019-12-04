@@ -12,14 +12,18 @@ public class AdapterGridViewMap  extends BaseAdapter {
     private int layout;
     LayoutInflater inflater;
     Ship[] listShip;
+    int[] statusMap;
+    int idMap;
 
 
 
-    public AdapterGridViewMap(Context context, int layout, Ship[] listShip)
+    public AdapterGridViewMap(Context context, int layout, Ship[] listShip, int[] statusMap, int idMap)
     {
         this.listShip= new Ship[7];
         this.listShip = listShip;
         this.layout = layout;
+        this.statusMap = statusMap;
+        this.idMap = idMap;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     private class ViewHolder{
@@ -46,21 +50,21 @@ public class AdapterGridViewMap  extends BaseAdapter {
         ViewHolder holder;
         Integer idImage = new Integer(-1);
         boolean isFound=false;
-        if(listShip[0] != null){
-            for (int i = 0 ; i< listShip.length ; i++)
-            {
-                for (int j =0 ; j<listShip[i].getPosition().size(); j++){
-                    if(position == listShip[i].getPosition().get(j)){
-                        idImage = listShip[i].getId_part().get(j);
-                        isFound = true;
-                        break;
-                    }
-                }
-                if(isFound){
-                    break;
-                }
-            }
-        }
+//        if(listShip[0] != null){
+//            for (int i = 0 ; i< listShip.length ; i++)
+//            {
+//                for (int j =0 ; j<listShip[i].getPosition().size(); j++){
+//                    if(position == listShip[i].getPosition().get(j)){
+//                        idImage = listShip[i].getId_part().get(j);
+//                        isFound = true;
+//                        break;
+//                    }
+//                }
+//                if(isFound){
+//                    break;
+//                }
+//            }
+//        }
 
         if(convertView == null){
             holder = new ViewHolder();
@@ -70,8 +74,23 @@ public class AdapterGridViewMap  extends BaseAdapter {
         }else{
             holder = (ViewHolder)convertView.getTag();
         }
-        if(idImage != -1){
-            holder.cell.setBackgroundResource(getIdImage(idImage));
+        if(statusMap[position] > 0){
+            if(statusMap[position] > 0 && statusMap[position] <= 10){
+                if(idMap == 1){
+                    holder.cell.setBackgroundResource(getIdImage(statusMap[position]));
+                }
+            }
+            else if(statusMap[position] > 100){
+                if(idMap == 0){
+                    holder.cell.setBackgroundResource(getIdImage(statusMap[position]));
+                }
+                else {
+                    holder.cell.setBackgroundResource(getIdImage(statusMap[position]-11));
+                }
+            }
+            else {
+                holder.cell.setBackgroundResource(R.drawable.x);
+            }
         }
         else {
             holder.cell.setBackgroundColor(Color.TRANSPARENT);
@@ -91,6 +110,16 @@ public class AdapterGridViewMap  extends BaseAdapter {
             case 8: return R.drawable.ship_4_2;
             case 9: return R.drawable.ship_4_3;
             case 10: return R.drawable.ship_4_4;
+            case 101: return R.drawable.shipbr_1;
+            case 102: return R.drawable.shipbr_2_1;
+            case 103: return R.drawable.shipbr_2_2;
+            case 104: return R.drawable.shipbr_3_1;
+            case 105: return R.drawable.shipbr_3_2;
+            case 106: return R.drawable.shipbr_3_3;
+            case 107: return R.drawable.shipbr_4_1;
+            case 108: return R.drawable.shipbr_4_2;
+            case 109: return R.drawable.shipbr_4_3;
+            case 110: return R.drawable.shipbr_4_4;
         }
         return 0;
     }

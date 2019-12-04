@@ -83,9 +83,9 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         listShip = new Ship[7];
         isReady = false;
 
-        itemImageAdapter = new AdapterGridViewMap(this, R.layout.map_cell, listShip);
+        itemImageAdapter = new AdapterGridViewMap(this, R.layout.map_cell, listShip, statusMap, 1);
         grv_board.setAdapter(itemImageAdapter);
-        initShip();
+        initShip(listShip);
         grv_board.setBackgroundColor(Color.TRANSPARENT);
         changeBackgroundRunable.run();
         listenerRunable.run();
@@ -184,8 +184,16 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                 }
                 if(mode != 1){
                     isRun = 0;
+                    Ship[] listEnemeyShip = new Ship[7];
+                    ArrayList<String> listEnemyData = new ArrayList<String>();
+                    initShip(listEnemeyShip);
+                    for (int i=0; i<listEnemeyShip.length; i++){
+                        listEnemyData.add(listEnemeyShip[i].toString());
+                    }
                     Intent intent = new Intent(PrepareActivity.this, InGameActivity.class);
                     intent.putExtra("listShip", listData);
+                    intent.putExtra("listEnemyShip", listEnemyData);
+                    intent.putExtra("isHost", getIntent().getStringExtra("isHost"));
                     startActivity(intent);
                 }
                 else{
@@ -398,14 +406,14 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         btnResetMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetMap(valueMap);
+                resetMap(valueMap, listShip);
             }
         });
     }
 
 
 
-    private void resetMap(int[] valueMap) {
+    private void resetMap(int[] valueMap, Ship[] listShip) {
         selectedShip = 0;
         previousSelectedShip = -1;
         btnShip111.setEnabled(true);
@@ -416,8 +424,8 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         btnShip131.setEnabled(true);
         btnShip141.setEnabled(true);
         resetSelection();
-        initShip();
-        itemImageAdapter = new AdapterGridViewMap(this, R.layout.map_cell, listShip);
+        initShip(listShip);
+        itemImageAdapter = new AdapterGridViewMap(this, R.layout.map_cell, listShip, statusMap, 1);
         grv_board.setAdapter(itemImageAdapter);
         for(int i = 0; i< 50; i++){
             statusMap[i] = 0;
@@ -468,8 +476,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                 grv_board.getAdapter().getItemId(selectedShip.getPosition().get(0)));
     }
 
-    public void initShip(){
-        listShip = new Ship[7];
+    public void initShip(Ship[] listShip){
         ArrayList<Integer> id_part = new ArrayList<Integer>();
         ArrayList<Integer> position = new ArrayList<Integer>();
         ArrayList<Boolean> status = new ArrayList<Boolean>();

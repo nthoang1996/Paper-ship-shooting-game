@@ -2,14 +2,11 @@ package hoangnt.student.paper_battleship;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Dialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -22,6 +19,8 @@ public class PlayerMap extends AppCompatActivity {
     private Handler mHandler = new Handler();
     int isRun = 1;
     int[] statusMap;
+    int[] selectedMap;
+    Ship [] listShip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,63 +28,89 @@ public class PlayerMap extends AppCompatActivity {
         setContentView(R.layout.activity_player_map);
 
         statusMap = new int[50];
+        selectedMap = new int[50];
         for(int i =0 ; i< 50; i++){
             statusMap[i] = 0;
+            selectedMap[i] = 0;
         }
         final int init=1;
 
         ArrayList<String> listData =  getIntent().getStringArrayListExtra("listShip");
-        Ship [] listShip = new Ship[7];
+        listShip = new Ship[7];
         if(listData != null){
             listShip = new Helper(getApplication()).parseListStringToListShipObject(listData);
         }
 
+        for(int i =0 ; i< listShip.length; i++){
+            for(int j=0; j< listShip[i].getPosition().size(); j++){
+                if(listShip[i].getPosition().get(j) >= 0){
+                    statusMap[listShip[i].getPosition().get(j)] = listShip[i].getId_part().get(j);
+                }
+            }
+        }
+
         myGridView = findViewById(R.id.gridview_BoardGame);
-        adapter = new AdapterGridViewMap(this, R.layout.map_cell, listShip);
+        int idMap;
+        if(getIntent().getStringExtra("Map").equals("Enemy")){
+            idMap = 0;
+        }
+        else {
+            idMap = 1;
+        }
+        adapter = new AdapterGridViewMap(this, R.layout.map_cell, listShip, statusMap, idMap);
         myGridView.setAdapter(adapter);
 
         final Ship[] finalListShip = listShip;
         myGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(getIntent().getStringExtra("Map").equals("Enemy") && Bluetooth.getYourTurn()){
-                    showDialogConfirmShoot(position, parent);
+                if(getIntent().getStringExtra("Map").equals("Enemy") && Bluetooth.getYourTurn() && selectedMap[position] != 1){
+                    Bluetooth.setYourTurn(false);
+                    Log.d("my-debuger", String.valueOf(position));
+                    String command = ""+ position;
+                    Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
+                    View childView=  (View)parent.getChildAt(position);
+                    TextView textView = childView.findViewById(R.id.cell_grid);
+                    textView.setBackgroundResource(R.drawable.x);
+                    selectedMap[position] = 1;
+                    isShootToShip(finalListShip, position);
+                    checkAnyShipDestroyed(finalListShip);
                 }
             }
         });
         listenerRunable.run();
     }
 
-    public void showDialogConfirmShoot(final int position, final AdapterView<?> parent){
-        final Dialog dialogConfirm;
-        dialogConfirm = new Dialog(PlayerMap.this);
-        dialogConfirm.setContentView(R.layout.confirm_dialog);
-
-        Button btnShoot = dialogConfirm.findViewById(R.id.btnOkConfirmDialog);
-        Button btnCancel = dialogConfirm.findViewById(R.id.btnCancelConfirmDialog);
-
-        btnShoot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("my-debuger", String.valueOf(position));
-                String command = "Shoot: "+ position;
-                Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
-                Bluetooth.setYourTurn(false);
-                View childView=  (View)parent.getChildAt(position);
-                TextView textView = childView.findViewById(R.id.cell_grid);
-                textView.setBackgroundResource(R.drawable.x);
-                dialogConfirm.dismiss();
+    public void isShootToShip(Ship[] listShip, int position){
+        for(int i =0 ; i< listShip.length; i++) {
+            for (int j = 0; j < listShip[i].getPosition().size(); j++) {
+                if(position == listShip[i].getPosition().get(j)){
+                    listShip[i].getStatus().set(j, false);
+                }
             }
-        });
+        }
+    }
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogConfirm.dismiss();
+    public void checkAnyShipDestroyed(Ship[] listShip){
+        for(int i =0 ; i< listShip.length; i++) {
+            int count = 0;
+            for (int j = 0; j < listShip[i].getPosition().size(); j++) {
+                if(!listShip[i].getStatus().get(j)){
+                    count +=1;
+                }
             }
-        });
+            if(count== listShip[i].getPosition().size()){
+                showShip(listShip[i]);
+                adapter.notifyDataSetChanged();
+            }
+        }
+    }
 
-        dialogConfirm.show();
+    public void showShip(Ship ship){
+        for (int i = 0; i<ship.getPosition().size(); i++){
+            Log.d("my-debuger", "" + ship.getPosition().get(i));
+            statusMap[ship.getPosition().get(i)] += 100;
+        }
     }
 
     private Runnable listenerRunable = new Runnable() {
@@ -98,7 +123,14 @@ public class PlayerMap extends AppCompatActivity {
                 if(!Bluetooth.getDataSending().isEmpty()){
                     Log.d("My-debuger", "This is your turn");
                     Bluetooth.setYourTurn(true);
-                    Bluetooth.setDataSending("");
+                    if(getIntent().getStringExtra("Map").equals("Your")){
+                        Log.d("my-debuger", Bluetooth.getDataSending());
+                        statusMap[Integer.parseInt(Bluetooth.getDataSending())] += 11;
+                        isShootToShip(listShip, Integer.parseInt(Bluetooth.getDataSending()));
+                        checkAnyShipDestroyed(listShip);
+                        adapter.notifyDataSetChanged();
+                        Bluetooth.setDataSending("");
+                    }
                 }
                 mHandler.postDelayed(this, 200);
             }

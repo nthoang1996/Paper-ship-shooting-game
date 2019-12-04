@@ -42,9 +42,6 @@ public class InGameActivity extends TabActivity {
         btnYourMap = findViewById(R.id.btnYourMap);
         btnEnemyMap = findViewById(R.id.btnEnemyMap);
 
-        btnEnemyMap.setBackgroundColor(Color.BLUE);
-        btnYourMap.setBackgroundResource(android.R.drawable.btn_default);
-
         tabContent = (FrameLayout) findViewById(android.R.id.tabcontent);
 
         tabHost = getTabHost();
@@ -77,6 +74,16 @@ public class InGameActivity extends TabActivity {
         else{
             Bluetooth.setYourTurn(true);
         }
+
+        tabHost.setCurrentTab(1);
+        btnYourMap.setSelected(true);
+        btnYourMap.setBackgroundColor(Color.BLUE);
+        btnEnemyMap.setBackgroundResource(android.R.drawable.btn_default);
+
+        tabHost.setCurrentTab(0);
+        btnEnemyMap.setSelected(true);
+        btnEnemyMap.setBackgroundColor(Color.BLUE);
+        btnYourMap.setBackgroundResource(android.R.drawable.btn_default);
     }
 
     public void tabHandler(View target) {

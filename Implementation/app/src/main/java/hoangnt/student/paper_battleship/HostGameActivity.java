@@ -86,6 +86,7 @@ public class HostGameActivity extends AppCompatActivity implements Serializable 
             public void onClick(View v) {
                 Intent intent = new Intent(HostGameActivity.this, PrepareActivity.class);
                 intent.putExtra("Mode", "0");
+                intent.putExtra("isHost", "1");
                 startActivity(intent);
             }
         });
