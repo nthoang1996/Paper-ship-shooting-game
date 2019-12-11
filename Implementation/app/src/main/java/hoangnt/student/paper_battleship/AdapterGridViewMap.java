@@ -120,6 +120,7 @@ public class AdapterGridViewMap  extends BaseAdapter {
             case 108: return R.drawable.shipbr_4_2;
             case 109: return R.drawable.shipbr_4_3;
             case 110: return R.drawable.shipbr_4_4;
+            case 50: return R.drawable.x;
         }
         return 0;
     }

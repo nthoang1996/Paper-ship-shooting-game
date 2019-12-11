@@ -2,6 +2,9 @@ package hoangnt.student.paper_battleship;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -71,10 +74,17 @@ public class PlayerMap extends AppCompatActivity {
                     Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
                     View childView=  (View)parent.getChildAt(position);
                     TextView textView = childView.findViewById(R.id.cell_grid);
+                    statusMap[position] += 50;
                     textView.setBackgroundResource(R.drawable.x);
                     selectedMap[position] = 1;
                     isShootToShip(finalListShip, position);
                     checkAnyShipDestroyed(finalListShip);
+                    if(checkFinish(listShip, 1) == 1){
+                        Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
+                        intent.putExtra("context", "1");
+                        intent.putExtra("exp", caculatorExp(listShip));
+                        startActivity(intent);
+                    }
                 }
             }
         });
@@ -109,8 +119,50 @@ public class PlayerMap extends AppCompatActivity {
     public void showShip(Ship ship){
         for (int i = 0; i<ship.getPosition().size(); i++){
             Log.d("my-debuger", "" + ship.getPosition().get(i));
-            statusMap[ship.getPosition().get(i)] += 100;
+            if(statusMap[ship.getPosition().get(i)]<100){
+                statusMap[ship.getPosition().get(i)] += 50;
+            }
+
         }
+    }
+
+    public int checkFinish(Ship[] listShip, int context){
+        for(int i = 0; i<listShip.length; i++){
+            for(int j = 0; j < listShip[i].getPosition().size(); j++){
+                if(listShip[i].getPosition().get(j) > 0 ){
+                    if(listShip[i].getStatus().get(j)){
+                        return 0;
+                    }
+                }
+            }
+        }
+        if(context == 2){
+            return 2;
+        }
+        else {
+            return 1;
+        }
+    }
+
+    public int caculatorExp(Ship[] listShip){
+        int exp = 0;
+        for(int i =0;i <listShip.length; i++){
+            for(int j = 0; j< listShip[i].getStatus().size(); j++){
+                if(listShip[i].getStatus().get(j)){
+                    switch (listShip[i].getType()){
+                        case 1: exp += 10;
+                        break;
+                        case 2: exp +=15;
+                        break;
+                        case 3: exp += 20;
+                        break;
+                        case 4: exp+= 25;
+                        break;
+                    }
+                }
+            }
+        }
+        return exp;
     }
 
     private Runnable listenerRunable = new Runnable() {
@@ -129,6 +181,12 @@ public class PlayerMap extends AppCompatActivity {
                         isShootToShip(listShip, Integer.parseInt(Bluetooth.getDataSending()));
                         checkAnyShipDestroyed(listShip);
                         adapter.notifyDataSetChanged();
+                        if(checkFinish(listShip, 2) == 2){
+                            Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
+                            intent.putExtra("context", "2");
+                            intent.putExtra("exp", "" + caculatorExp(listShip));
+                            startActivity(intent);
+                        }
                         Bluetooth.setDataSending("");
                     }
                 }

@@ -556,43 +556,43 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
             btnShip111.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip111.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            btnShip111.setBackgroundResource(R.drawable.ship_1);
         }
         if(!btnShip112.isEnabled()){
             btnShip112.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip112.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            btnShip111.setBackgroundResource(R.drawable.ship_1);
         }
         if(!btnShip113.isEnabled()){
             btnShip113.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip113.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            btnShip111.setBackgroundResource(R.drawable.ship_1);
         }
         if(!btnShip121.isEnabled()){
             btnShip121.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip121.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            btnShip111.setBackgroundResource(R.drawable.ship_2);
         }
         if(!btnShip122.isEnabled()){
             btnShip122.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip122.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            btnShip111.setBackgroundResource(R.drawable.ship_2);
         }
         if(!btnShip131.isEnabled()){
             btnShip131.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip131.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            btnShip111.setBackgroundResource(R.drawable.ship_3);
         }
         if(!btnShip141.isEnabled()){
             btnShip141.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip141.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            btnShip111.setBackgroundResource(R.drawable.ship_4);
         }
     }
 

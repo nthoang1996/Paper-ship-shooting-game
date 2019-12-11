@@ -73,7 +73,7 @@
     <string name="spell_text">Spell</string>
     <string name="surrender_text">Surrender</string>
     <string name="menu_text">Menu</string>
-    <string name="confirm_shoot_text">Are you sure to shoot here?</string>
-    <string name="shoot_text">Shoot</string>
-    <string name="cancel_text">Wait</string>
+    <string name="back_to_main_menu_text">Back to main menu</string>
+    <string name="you_win_text">You win</string>
+    <string name="you_loose_text">You lose</string>
 </resources>
