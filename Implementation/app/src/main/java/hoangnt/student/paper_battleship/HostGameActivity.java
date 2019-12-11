@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,8 @@ public class HostGameActivity extends AppCompatActivity implements Serializable 
     Button btnHostGame;
     Button btnPracticeWithBot;
     Button btnBack;
+    int isRun = 1;
+    private Handler mHandler = new Handler();
 
     /**
      * Broadcast Receiver for changes made to bluetooth states such as:
@@ -99,29 +102,31 @@ public class HostGameActivity extends AppCompatActivity implements Serializable 
         });
     }
 
-   public void showDialogHostGame(){
-        final Dialog dialogWaiting;
-        dialogWaiting = new Dialog(HostGameActivity.this);
-        dialogWaiting.setContentView(R.layout.waiting_dialog);
+    private Runnable findGameRunable = new Runnable() {
+        @Override
+        public void run() {
+            if(isRun == 0){
+                mHandler.removeCallbacks(this);
+            }
+            else{
+                if (Bluetooth.getIsBond()) {
+                    isRun = 0;
+                    Log.d("My-debuger", "Host to prepare");
+                    Intent intent_game = new Intent(HostGameActivity.this, PrepareActivity.class);
+                    intent_game.putExtra("Mode", "1");
+                    intent_game.putExtra("isHost", "1");
+                    startActivity(intent_game);
+                }
+                mHandler.postDelayed(this, 200);
+            }
+        }
+    };
 
-        final Button btnOk = (Button) dialogWaiting.findViewById(R.id.btnOkWaitingDialog);
-        final TextView textViewMsg = (TextView) dialogWaiting.findViewById(R.id.textViewWaitingDialog);
-        btnOk.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               if(Bluetooth.isBond){
-                   textViewMsg.setText(R.string.enemy_spotted);
-                   btnOk.setVisibility(View.INVISIBLE);
-                   Intent intent_game = new Intent(HostGameActivity.this, PrepareActivity.class);
-                   intent_game.putExtra("Mode", "1");
-                   intent_game.putExtra("isHost", "1");
-                   startActivity(intent_game);
-               }else{
-                   textViewMsg.setText(R.string.no_enemy);
-                   textViewMsg.setText(R.string.continue_find);
-               }
-           }
-       });
-        dialogWaiting.show();
+   public void showDialogHostGame(){
+       final Dialog dialogWaiting;
+       dialogWaiting = new Dialog(HostGameActivity.this);
+       dialogWaiting.setContentView(R.layout.waiting_dialog);
+       findGameRunable.run();
+       dialogWaiting.show();
     }
 }

@@ -74,7 +74,7 @@
     <string name="spell_text">Kỹ năng</string>
     <string name="surrender_text">Đầu hàng</string>
     <string name="menu_text">Tùy chọn khác</string>
-    <string name="confirm_shoot_text">Bạn có chắc chắn sẽ tấn công vào đây không?</string>
-    <string name="shoot_text">Bắn nó</string>
-    <string name="cancel_text">Khoan đã</string>
+    <string name="back_to_main_menu_text">Trở về menu chính</string>
+    <string name="you_win_text">Bạn thắng</string>
+    <string name="you_loose_text">Bạn thua</string>
 </resources>

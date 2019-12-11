@@ -66,14 +66,14 @@
                     android:layout_width="40dp"
                     android:layout_height="160dp"
                     android:layout_margin="8dp"
-                    android:background="@color/colorPrimary" />
+                    android:background="@drawable/ship_4" />
 
                 <Button
                     android:id="@+id/btn_Ship1x3"
                     android:layout_width="40dp"
                     android:layout_height="120dp"
                     android:layout_margin="8dp"
-                    android:background="@color/colorPrimary" />
+                    android:background="@drawable/ship_3" />
             </LinearLayout>
 
             <LinearLayout
@@ -91,35 +91,35 @@
                     android:layout_width="40dp"
                     android:layout_height="80dp"
                     android:layout_margin="8dp"
-                    android:background="@color/colorPrimary" />
+                    android:background="@drawable/ship_2" />
 
                 <Button
                     android:id="@+id/btn_Ship1x2_2"
                     android:layout_width="40dp"
                     android:layout_height="80dp"
                     android:layout_margin="8dp"
-                    android:background="@color/colorPrimary" />
+                    android:background="@drawable/ship_2" />
 
                 <Button
                     android:id="@+id/btn_Ship1x1_1"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_margin="8dp"
-                    android:background="@color/colorPrimary" />
+                    android:background="@drawable/ship_1" />
 
                 <Button
                     android:id="@+id/btn_Ship1x1_2"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_margin="8dp"
-                    android:background="@color/colorPrimary" />
+                    android:background="@drawable/ship_1" />
 
                 <Button
                     android:id="@+id/btn_Ship1x1_3"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_margin="8dp"
-                    android:background="@color/colorPrimary" />
+                    android:background="@drawable/ship_1" />
 
             </LinearLayout>
 
