@@ -31,13 +31,14 @@
         android:weightSum="10">
 
         <TextView
+            android:id="@+id/textViewLevelResult"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="right"
             android:paddingRight="10dp"
             android:textSize="24sp"
-            android:text="Lv11"/>
+            android:text=""/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -47,7 +48,7 @@
             android:weightSum="10">
 
             <ProgressBar
-                android:id="@+id/progressBarLevel"
+                android:id="@+id/progressBarLevelResult"
                 style="@android:style/Widget.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
@@ -55,11 +56,11 @@
                 android:layout_alignParentTop="true"/>
 
             <TextView
+                android:id="@+id/textViewExpResult"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 android:layout_gravity="center"
-                android:text="170/1050"
                 android:layout_marginTop="10dp"/>
 
         </LinearLayout>
@@ -79,6 +80,7 @@
             android:layout_weight="2"/>
 
         <LinearLayout
+            android:id="@+id/unlock_spell_linear"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal"
@@ -91,7 +93,7 @@
                 android:layout_height="match_parent"
                 android:textSize="30sp"
                 android:gravity="center_horizontal"
-                android:text="Unlock"
+                android:text="@string/unlock_text"
                 android:layout_weight="5"/>
 
             <LinearLayout
@@ -107,17 +109,17 @@
                     android:layout_weight="1"/>
 
                 <ImageView
+                    android:id="@+id/imgSpellLevelUp"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/skill_lvl2"
                     android:scaleType="fitCenter"/>
 
                 <TextView
+                    android:id="@+id/textViewSpellNameLevelUp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Mist 1 cell"
                     android:textSize="30sp"
                     />
 
@@ -133,10 +135,11 @@
         android:layout_weight="2">
 
         <Button
+            android:id="@+id/btnMainMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:text="Main menu"
+            android:text="@string/main_menu_text"
             android:paddingTop="20dp"
             android:paddingBottom="20dp"
             android:paddingLeft="40dp"
