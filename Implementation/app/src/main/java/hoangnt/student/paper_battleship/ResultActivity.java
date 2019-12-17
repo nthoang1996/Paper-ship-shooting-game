@@ -117,21 +117,21 @@ public class ResultActivity extends AppCompatActivity {
                 }
                 else {
                     mHandler.removeCallbacks(this);
-                    File storagePath = getApplication().getFilesDir();
-                    String myDbPath = storagePath + "/" + "myGameDatabase";
-                    try{
-                        db = SQLiteDatabase.openDatabase(myDbPath, null,
-                                SQLiteDatabase.CREATE_IF_NECESSARY);
-                        db.beginTransaction();
-                        db.execSQL("update tblLever set current_exp = " + curExp + ", unlock = 1 where level =" + userLevel);
-
-                        db.setTransactionSuccessful(); //commit your changes
-                    } catch (SQLiteException e) {
-                        Log.d("Db-Ex", e.getMessage());
-                    }finally {
-                        db.endTransaction();
-                        db.close();
-                    }
+//                    File storagePath = getApplication().getFilesDir();
+//                    String myDbPath = storagePath + "/" + "myGameDatabase";
+//                    try{
+//                        db = SQLiteDatabase.openDatabase(myDbPath, null,
+//                                SQLiteDatabase.CREATE_IF_NECESSARY);
+//                        db.beginTransaction();
+//                        db.execSQL("update tblLever set current_exp = " + curExp + ", unlock = 1 where level =" + userLevel);
+//
+//                        db.setTransactionSuccessful(); //commit your changes
+//                    } catch (SQLiteException e) {
+//                        Log.d("Db-Ex", e.getMessage());
+//                    }finally {
+//                        db.endTransaction();
+//                        db.close();
+//                    }
                     btnMainMenu.setEnabled(true);
                 }
             }
