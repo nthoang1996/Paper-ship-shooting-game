@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PrepareActivity extends AppCompatActivity implements Serializable {
     GridView grv_board;
@@ -415,9 +416,20 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                 resetMap(valueMap, listShip);
             }
         });
+
+        getListSkillUser();
     }
 
-
+    private void getListSkillUser(){
+        ArrayList<Item> listItem = new Helper(getApplication()).getListItem();
+        InfoMatch.listItemUser = new ArrayList<Item>();
+        for(int i =0; i< listItem.size(); i++){
+            if(listItem.get(i).getType() == 0){
+                InfoMatch.listItemUser.add(listItem.get(i));
+            }
+        }
+        Log.d("my-debuger","list skill");
+    }
 
     private void resetMap(int[] valueMap, Ship[] listShip) {
         selectedShip = 0;

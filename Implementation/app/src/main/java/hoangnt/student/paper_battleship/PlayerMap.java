@@ -70,6 +70,7 @@ public class PlayerMap extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(getIntent().getStringExtra("Map").equals("Enemy") && Bluetooth.getYourTurn() && selectedMap[position] != 1){
                     Bluetooth.setYourTurn(false);
+                    InfoMatch.setIsRandomItem(false);
                     Log.d("my-debuger", String.valueOf(position));
                     String command = ""+ position;
                     Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
@@ -80,6 +81,7 @@ public class PlayerMap extends AppCompatActivity {
                     selectedMap[position] = 1;
                     isShootToShip(finalListShip, position, 0);
                     checkAnyShipDestroyed(finalListShip);
+
                     if(checkFinish(listShip, 1) == 1){
                         Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
                         intent.putExtra("context", "1");
@@ -182,7 +184,7 @@ public class PlayerMap extends AppCompatActivity {
                     Log.d("My-debuger", "This is your turn");
                     Bluetooth.setYourTurn(true);
                     if(getIntent().getStringExtra("Map").equals("Your")){
-                        Log.d("my-debuger", Bluetooth.getDataSending());
+//                        Log.d("my-debuger", Bluetooth.getDataSending());
                         statusMap[Integer.parseInt(Bluetooth.getDataSending())] += 61;
                         isShootToShip(listShip, Integer.parseInt(Bluetooth.getDataSending()), 1);
                         checkAnyShipDestroyed(listShip);
@@ -200,4 +202,6 @@ public class PlayerMap extends AppCompatActivity {
             }
         }
     };
+
+
 }

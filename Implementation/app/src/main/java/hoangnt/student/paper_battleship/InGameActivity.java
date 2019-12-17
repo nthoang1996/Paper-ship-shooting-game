@@ -2,9 +2,11 @@ package hoangnt.student.paper_battleship;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -12,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class InGameActivity extends TabActivity {
     private TabHost tabHost;
@@ -23,6 +26,9 @@ public class InGameActivity extends TabActivity {
     Button btnMenu;
     Button btnYourMap;
     Button btnEnemyMap;
+
+    Integer turn =0;
+    ArrayList<Item> listItemUser = InfoMatch.getListItemUser();
 
     private Handler mHandler = new Handler();
     int isRun = 1;
@@ -67,6 +73,7 @@ public class InGameActivity extends TabActivity {
         tabHost.addTab(yourSpec);
 
         changeBackgroundRunable.run();
+        randomItemRunable.run();
 
         if(getIntent().getStringExtra("isHost").equals("0")){
             Bluetooth.setYourTurn(false);
@@ -108,6 +115,7 @@ public class InGameActivity extends TabActivity {
 
         @Override
         public void run() {
+           // Log.d("my-debug", "change background");
             if(isRun == 0){
                 mHandler.removeCallbacks(this);
             }
@@ -128,5 +136,37 @@ public class InGameActivity extends TabActivity {
             tabContent.setBackgroundResource(id);
         }
 
+
+    };
+
+    private Runnable randomItemRunable = new Runnable() {
+        @Override
+        public void run() {
+
+            if(isRun == 0){
+                mHandler.removeCallbacks(this);
+            }
+            else {
+                Log.d("my-debug", "random" + Bluetooth.getDataSending());
+                if(Bluetooth.getYourTurn() && !InfoMatch.getIsRandomItem()){
+                   // Log.d("my-debug", "random");
+                        turn++;
+
+                        if (turn % 1 == 0) {
+                            Random random = new Random();
+                            Integer index = random.nextInt(listItemUser.size());
+                            Item skill = listItemUser.get(index);
+                            Log.d("my-debug", "random skill");
+                            imageViewSpell1.setImageResource(getResources().getIdentifier(skill.getImageName(), "drawable", getPackageName()));
+                            InfoMatch.setIsRandomItem(true);
+
+                        }
+
+                       // Bluetooth.setDataSending("");
+                }
+                mHandler.postDelayed(this, 200);
+            }
+
+        }
     };
 }

@@ -64,6 +64,7 @@ public class SettingActivity extends AppCompatActivity {
         user = new User(setting.getUserName(), 0);
         listItem = new ArrayList<Item>();
         listActiveItem = new ArrayList<Item>();
+
         listItem = new Helper(getApplication()).getListItem();
         listBattleHistory = new ArrayList<BattleHistory>();
         listBattleHistory = new Helper((getApplication())).getListBattleHistory();
@@ -74,15 +75,16 @@ public class SettingActivity extends AppCompatActivity {
                 listActiveItem.add(listItem.get(i));
             }
         }
+
         for(int i = 0; i<22; i ++){
-            if(i< listActiveItem.size()){
-                listImageId[i] = getResources().getIdentifier(listActiveItem.get(i).getImageName(),"drawable", getPackageName());
-                listDescriptionId[i] = getResources().getIdentifier(listActiveItem.get(i).getImageName(), "string", getPackageName());
-            }
-            else {
-                listImageId[i] = getResources().getIdentifier("unreached_skill", "drawable", getPackageName());
-                listDescriptionId[i] = getResources().getIdentifier("unreached_skill", "string", getPackageName());
-            }
+                if(i< listActiveItem.size()){
+                    listImageId[i] = getResources().getIdentifier(listActiveItem.get(i).getImageName(),"drawable", getPackageName());
+                    listDescriptionId[i] = getResources().getIdentifier(listActiveItem.get(i).getImageName(), "string", getPackageName());
+                }
+                else {
+                    listImageId[i] = getResources().getIdentifier("unreached_skill", "drawable", getPackageName());
+                    listDescriptionId[i] = getResources().getIdentifier("unreached_skill", "string", getPackageName());
+                }
         }
         user.setLevel(listItem.size());
         txtViewUserLevel = findViewById(R.id.text_level_user);
