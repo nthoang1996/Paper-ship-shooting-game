@@ -37,6 +37,26 @@ public class Helper {
         return setting;
     }
 
+    public Item getItemPerLevel(int level){
+        Cursor c1;
+        Item myItem = null;
+        try{
+            db = SQLiteDatabase.openDatabase(myDbPath, null,
+                    SQLiteDatabase.CREATE_IF_NECESSARY);
+
+            c1 = db.rawQuery("select * from tblLever where level = " + level, null);
+            c1.moveToPosition(-1);
+            while ( c1.moveToNext() ){
+                myItem = new Item(c1.getString(6), c1.getInt(5), c1.getInt(0), c1.getInt(1)==1, c1.getInt(2), c1.getInt(3), c1.getString(4));
+            }
+        }catch (Exception ex){
+            Log.d("Db-Ex", ex.getMessage());
+        }finally {
+            db.close();
+        }
+        return  myItem;
+    }
+
     public ArrayList<Item> getListItem(){
         Cursor c1;
         ArrayList<Item> listItem = new ArrayList<Item>();
@@ -141,6 +161,26 @@ public class Helper {
             case 9: tv.setBackgroundResource(R.drawable.ship_4_3);
                 break;
             case 10: tv.setBackgroundResource(R.drawable.ship_4_4);
+                break;
+            case 21: tv.setBackgroundResource(R.drawable.n_ship_1);
+                break;
+            case 22: tv.setBackgroundResource(R.drawable.n_ship_2_2);
+                break;
+            case 23: tv.setBackgroundResource(R.drawable.n_ship_2_1);
+                break;
+            case 24: tv.setBackgroundResource(R.drawable.n_ship_3_3);
+                break;
+            case 25: tv.setBackgroundResource(R.drawable.n_ship_3_2);
+                break;
+            case 26: tv.setBackgroundResource(R.drawable.n_ship_3_1);
+                break;
+            case 27: tv.setBackgroundResource(R.drawable.n_ship_4_4);
+                break;
+            case 28: tv.setBackgroundResource(R.drawable.n_ship_4_3);
+                break;
+            case 29: tv.setBackgroundResource(R.drawable.n_ship_4_2);
+                break;
+            case 30: tv.setBackgroundResource(R.drawable.n_ship_4_1);
                 break;
         }
     }

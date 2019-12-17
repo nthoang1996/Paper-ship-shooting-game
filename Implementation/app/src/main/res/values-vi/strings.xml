@@ -77,4 +77,7 @@
     <string name="back_to_main_menu_text">Trở về menu chính</string>
     <string name="you_win_text">Bạn thắng</string>
     <string name="you_loose_text">Bạn thua</string>
+    <string name="unlock_text">Mở</string>
+    <string name="lv_text">Cấp</string>
+    <string name="main_menu_text">Về trang chính</string>
 </resources>

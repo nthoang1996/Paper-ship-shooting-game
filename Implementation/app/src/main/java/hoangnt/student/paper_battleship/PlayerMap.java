@@ -56,6 +56,7 @@ public class PlayerMap extends AppCompatActivity {
         int idMap;
         if(getIntent().getStringExtra("Map").equals("Enemy")){
             idMap = 0;
+            InfoMatch.setListEnemyShip(listShip);
         }
         else {
             idMap = 1;
@@ -77,12 +78,12 @@ public class PlayerMap extends AppCompatActivity {
                     statusMap[position] += 50;
                     textView.setBackgroundResource(R.drawable.x);
                     selectedMap[position] = 1;
-                    isShootToShip(finalListShip, position);
+                    isShootToShip(finalListShip, position, 0);
                     checkAnyShipDestroyed(finalListShip);
                     if(checkFinish(listShip, 1) == 1){
                         Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
                         intent.putExtra("context", "1");
-                        intent.putExtra("exp", caculatorExp(listShip));
+                        intent.putExtra("exp", "" + caculatorExp(listShip));
                         startActivity(intent);
                     }
                 }
@@ -91,11 +92,14 @@ public class PlayerMap extends AppCompatActivity {
         listenerRunable.run();
     }
 
-    public void isShootToShip(Ship[] listShip, int position){
+    public void isShootToShip(Ship[] listShip, int position, int idMap){
         for(int i =0 ; i< listShip.length; i++) {
             for (int j = 0; j < listShip[i].getPosition().size(); j++) {
                 if(position == listShip[i].getPosition().get(j)){
                     listShip[i].getStatus().set(j, false);
+                }
+                if(idMap == 0){
+                    InfoMatch.setListEnemyShip(listShip);
                 }
             }
         }
@@ -129,7 +133,7 @@ public class PlayerMap extends AppCompatActivity {
     public int checkFinish(Ship[] listShip, int context){
         for(int i = 0; i<listShip.length; i++){
             for(int j = 0; j < listShip[i].getPosition().size(); j++){
-                if(listShip[i].getPosition().get(j) > 0 ){
+                if(listShip[i].getPosition().get(j) >= 0 ){
                     if(listShip[i].getStatus().get(j)){
                         return 0;
                     }
@@ -148,16 +152,18 @@ public class PlayerMap extends AppCompatActivity {
         int exp = 0;
         for(int i =0;i <listShip.length; i++){
             for(int j = 0; j< listShip[i].getStatus().size(); j++){
-                if(listShip[i].getStatus().get(j)){
-                    switch (listShip[i].getType()){
-                        case 1: exp += 10;
-                        break;
-                        case 2: exp +=15;
-                        break;
-                        case 3: exp += 20;
-                        break;
-                        case 4: exp+= 25;
-                        break;
+                if(listShip[i].getPosition().get(j) >= 0 ){
+                    if(!listShip[i].getStatus().get(j)){
+                        switch (listShip[i].getType()){
+                            case 1: exp += 10;
+                                break;
+                            case 2: exp +=15;
+                                break;
+                            case 3: exp += 20;
+                                break;
+                            case 4: exp+= 25;
+                                break;
+                        }
                     }
                 }
             }
@@ -177,14 +183,14 @@ public class PlayerMap extends AppCompatActivity {
                     Bluetooth.setYourTurn(true);
                     if(getIntent().getStringExtra("Map").equals("Your")){
                         Log.d("my-debuger", Bluetooth.getDataSending());
-                        statusMap[Integer.parseInt(Bluetooth.getDataSending())] += 11;
-                        isShootToShip(listShip, Integer.parseInt(Bluetooth.getDataSending()));
+                        statusMap[Integer.parseInt(Bluetooth.getDataSending())] += 61;
+                        isShootToShip(listShip, Integer.parseInt(Bluetooth.getDataSending()), 1);
                         checkAnyShipDestroyed(listShip);
                         adapter.notifyDataSetChanged();
                         if(checkFinish(listShip, 2) == 2){
                             Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
                             intent.putExtra("context", "2");
-                            intent.putExtra("exp", "" + caculatorExp(listShip));
+                            intent.putExtra("exp", "" + caculatorExp(InfoMatch.getListEnemyShip()));
                             startActivity(intent);
                         }
                         Bluetooth.setDataSending("");

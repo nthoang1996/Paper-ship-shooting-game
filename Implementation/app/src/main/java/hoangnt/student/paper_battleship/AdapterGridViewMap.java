@@ -75,7 +75,7 @@ public class AdapterGridViewMap  extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
         }
         if(statusMap[position] > 0){
-            if(statusMap[position] > 0 && statusMap[position] <= 10){
+            if((statusMap[position] > 0 && statusMap[position] <= 10) || (statusMap[position] > 21 && statusMap[position] <= 30)){
                 if(idMap == 1){
                     holder.cell.setBackgroundResource(getIdImage(statusMap[position]));
                 }
@@ -110,6 +110,17 @@ public class AdapterGridViewMap  extends BaseAdapter {
             case 8: return R.drawable.ship_4_2;
             case 9: return R.drawable.ship_4_3;
             case 10: return R.drawable.ship_4_4;
+            case 21: return R.drawable.n_ship_1;
+            case 22: return R.drawable.n_ship_2_2;
+            case 23: return R.drawable.n_ship_2_1;
+            case 24: return R.drawable.n_ship_3_3;
+            case 25: return R.drawable.n_ship_3_2;
+            case 26: return R.drawable.n_ship_3_1;
+            case 27: return R.drawable.n_ship_4_4;
+            case 28: return R.drawable.n_ship_4_3;
+            case 29: return R.drawable.n_ship_4_2;
+            case 30: return R.drawable.n_ship_4_1;
+            case 50: return R.drawable.x;
             case 101: return R.drawable.shipbr_1;
             case 102: return R.drawable.shipbr_2_1;
             case 103: return R.drawable.shipbr_2_2;
@@ -120,7 +131,16 @@ public class AdapterGridViewMap  extends BaseAdapter {
             case 108: return R.drawable.shipbr_4_2;
             case 109: return R.drawable.shipbr_4_3;
             case 110: return R.drawable.shipbr_4_4;
-            case 50: return R.drawable.x;
+            case 121: return R.drawable.n_shipbr_1;
+            case 122: return R.drawable.n_shipbr_2_2;
+            case 123: return R.drawable.n_shipbr_2_1;
+            case 124: return R.drawable.n_shipbr_3_3;
+            case 125: return R.drawable.n_shipbr_3_2;
+            case 126: return R.drawable.n_shipbr_3_1;
+            case 127: return R.drawable.n_shipbr_4_4;
+            case 128: return R.drawable.n_shipbr_4_3;
+            case 129: return R.drawable.n_shipbr_4_2;
+            case 130: return R.drawable.n_shipbr_4_1;
         }
         return 0;
     }

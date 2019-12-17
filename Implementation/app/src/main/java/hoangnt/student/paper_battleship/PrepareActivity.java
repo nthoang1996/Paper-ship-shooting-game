@@ -223,7 +223,13 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     if(forceDeleteShip == 0){
                         switch (type){
                             case 1:
-                                setShipAtPosition(parent,position,0, shipSelected.getId_part().get(0), false, valueMap, selectedShip);
+                                if(shipSelected.getOrigentation() == 1){
+                                    setShipAtPosition(parent,position,0, shipSelected.getId_part().get(0), false, valueMap, selectedShip);
+                                }
+                                else {
+                                    shipSelected.setId_part(1,21);
+                                    setShipAtPosition(parent,position,0, shipSelected.getId_part().get(0), false, valueMap, selectedShip);
+                                }
                                 break;
                             case 2:
                                 if(shipSelected.getOrigentation() == 1){
@@ -244,12 +250,12 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                                     nextPost = position - 1;
                                     if(nextPost/5 != position/5 || nextPost == -1){
                                         nextPost = position+1;
-                                        shipSelected.setId_part(1,2);
-                                        shipSelected.setId_part(0,3);
+                                        shipSelected.setId_part(1,22);
+                                        shipSelected.setId_part(0,23);
                                     }
                                     else {
-                                        shipSelected.setId_part(0,2);
-                                        shipSelected.setId_part(1,3);
+                                        shipSelected.setId_part(0,22);
+                                        shipSelected.setId_part(1,23);
                                     }
                                     setShipAtPosition(parent,position,0, shipSelected.getId_part().get(0), false, valueMap, selectedShip);
                                     setShipAtPosition(parent,nextPost,1, shipSelected.getId_part().get(1), false, valueMap, selectedShip);
@@ -285,21 +291,21 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                                     prePos = position + 1;
                                     if(nextPost/5 != position/5 || nextPost == -1){
                                         nextPost = position+2;
-                                        shipSelected.setId_part(0,6);
-                                        shipSelected.setId_part(1,4);
-                                        shipSelected.setId_part(2,5);
+                                        shipSelected.setId_part(0,26);
+                                        shipSelected.setId_part(1,24);
+                                        shipSelected.setId_part(2,25);
 
                                     }
                                     else if(prePos/5 != position/5){
                                         prePos = position - 2;
-                                        shipSelected.setId_part(0,4);
-                                        shipSelected.setId_part(1,5);
-                                        shipSelected.setId_part(2,6);
+                                        shipSelected.setId_part(0,24);
+                                        shipSelected.setId_part(1,25);
+                                        shipSelected.setId_part(2,26);
                                     }
                                     else {
-                                        shipSelected.setId_part(0,5);
-                                        shipSelected.setId_part(1,6);
-                                        shipSelected.setId_part(2,4);
+                                        shipSelected.setId_part(0,25);
+                                        shipSelected.setId_part(1,26);
+                                        shipSelected.setId_part(2,24);
                                     }
                                     setShipAtPosition(parent,position,0, shipSelected.getId_part().get(0), false, valueMap, selectedShip);
                                     setShipAtPosition(parent,nextPost,1, shipSelected.getId_part().get(1), false, valueMap, selectedShip);
@@ -353,32 +359,32 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                                         if(nextPost % 5 == 3 || nextPost == -2){
                                             nextPost = position + 3;
                                             semiNextPost = position + 2;
-                                            shipSelected.setId_part(0,10);
-                                            shipSelected.setId_part(1,8);
-                                            shipSelected.setId_part(2,9);
-                                            shipSelected.setId_part(3,7);
+                                            shipSelected.setId_part(0,30);
+                                            shipSelected.setId_part(1,28);
+                                            shipSelected.setId_part(2,29);
+                                            shipSelected.setId_part(3,27);
 
                                         }
                                         else if(nextPost % 5 == 4 || nextPost == -1){
                                             nextPost = position + 2;
-                                            shipSelected.setId_part(0,9);
-                                            shipSelected.setId_part(1,10);
-                                            shipSelected.setId_part(2,8);
-                                            shipSelected.setId_part(3,7);
+                                            shipSelected.setId_part(0,29);
+                                            shipSelected.setId_part(1,30);
+                                            shipSelected.setId_part(2,28);
+                                            shipSelected.setId_part(3,27);
                                         }
                                     }
                                     else if(prePos/5 != position /5){
                                         prePos = position - 3;
-                                        shipSelected.setId_part(0,7);
-                                        shipSelected.setId_part(1,8);
-                                        shipSelected.setId_part(2,10);
-                                        shipSelected.setId_part(3,9);
+                                        shipSelected.setId_part(0,27);
+                                        shipSelected.setId_part(1,28);
+                                        shipSelected.setId_part(2,30);
+                                        shipSelected.setId_part(3,29);
                                     }
                                     else {
-                                        shipSelected.setId_part(0,8);
-                                        shipSelected.setId_part(1,9);
-                                        shipSelected.setId_part(2,7);
-                                        shipSelected.setId_part(3,10);
+                                        shipSelected.setId_part(0,28);
+                                        shipSelected.setId_part(1,29);
+                                        shipSelected.setId_part(2,27);
+                                        shipSelected.setId_part(3,30);
                                     }
                                     setShipAtPosition(parent,position,0, shipSelected.getId_part().get(0), false, valueMap, selectedShip);
                                     setShipAtPosition(parent,semiNextPost,1, shipSelected.getId_part().get(1), false, valueMap, selectedShip);
@@ -562,37 +568,37 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
             btnShip112.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip111.setBackgroundResource(R.drawable.ship_1);
+            btnShip112.setBackgroundResource(R.drawable.ship_1);
         }
         if(!btnShip113.isEnabled()){
             btnShip113.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip111.setBackgroundResource(R.drawable.ship_1);
+            btnShip113.setBackgroundResource(R.drawable.ship_1);
         }
         if(!btnShip121.isEnabled()){
             btnShip121.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip111.setBackgroundResource(R.drawable.ship_2);
+            btnShip121.setBackgroundResource(R.drawable.ship_2);
         }
         if(!btnShip122.isEnabled()){
             btnShip122.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip111.setBackgroundResource(R.drawable.ship_2);
+            btnShip122.setBackgroundResource(R.drawable.ship_2);
         }
         if(!btnShip131.isEnabled()){
             btnShip131.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip111.setBackgroundResource(R.drawable.ship_3);
+            btnShip131.setBackgroundResource(R.drawable.ship_3);
         }
         if(!btnShip141.isEnabled()){
             btnShip141.setBackgroundColor(Color.RED);
         }
         else {
-            btnShip111.setBackgroundResource(R.drawable.ship_4);
+            btnShip141.setBackgroundResource(R.drawable.ship_4);
         }
     }
 

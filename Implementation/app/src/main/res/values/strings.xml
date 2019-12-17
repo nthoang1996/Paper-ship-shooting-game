@@ -76,4 +76,8 @@
     <string name="back_to_main_menu_text">Back to main menu</string>
     <string name="you_win_text">You win</string>
     <string name="you_loose_text">You lose</string>
+    <string name="unlock_text">Unlock</string>
+    <string name="lv_text">Lv</string>
+    <string name="main_menu_text">Main menu</string>
+
 </resources>
