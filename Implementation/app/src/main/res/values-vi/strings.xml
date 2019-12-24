@@ -80,4 +80,5 @@
     <string name="unlock_text">Mở</string>
     <string name="lv_text">Cấp</string>
     <string name="main_menu_text">Về trang chính</string>
+    <string name="start_text">Chiến thôi</string>
 </resources>

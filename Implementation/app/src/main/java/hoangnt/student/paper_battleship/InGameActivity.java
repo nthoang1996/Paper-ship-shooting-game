@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -19,19 +20,17 @@ import java.util.Random;
 public class InGameActivity extends TabActivity {
     private TabHost tabHost;
     private FrameLayout tabContent;
-    TextView textViewTurn;
+    TextView textViewTurn, textViewTimeCoundoutTurn;
     ImageView imageViewSpell1, imageViewSpell2, imageViewSpell3;
     TextView textViewTime;
     Button btnSur;
     Button btnMenu;
     Button btnYourMap;
     Button btnEnemyMap;
-
-    Integer turn =0;
     ArrayList<Item> listItemUser = InfoMatch.getListItemUser();
-
-    private Handler mHandler = new Handler();
     int isRun = 1;
+    int timeCountdown = 60;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +38,7 @@ public class InGameActivity extends TabActivity {
         setContentView(R.layout.activity_in_game);
 
         textViewTurn = findViewById(R.id.textViewTurn);
+        textViewTimeCoundoutTurn = findViewById(R.id.textViewCountdownTurn);
         imageViewSpell1 = findViewById(R.id.imgSpell1);
         imageViewSpell2 = findViewById(R.id.imgSpell2);
         imageViewSpell3 = findViewById(R.id.imgSpell3);
@@ -56,6 +56,7 @@ public class InGameActivity extends TabActivity {
         EnemySpec.setIndicator("Enemy map");
         Intent enemyIntent = new Intent(this, PlayerMap.class);
         enemyIntent.putStringArrayListExtra("listShip", listEnemyData);
+        enemyIntent.putExtra("Mode", getIntent().getStringExtra("Mode"));
         enemyIntent.putExtra("Map", "Enemy");
         EnemySpec.setContent(enemyIntent);
 
@@ -66,14 +67,9 @@ public class InGameActivity extends TabActivity {
         yourIntent.setClass(this, PlayerMap.class);
         yourIntent.putStringArrayListExtra("listShip", listData);
         yourIntent.putExtra("Map", "Your");
+        yourIntent.putExtra("Mode", getIntent().getStringExtra("Mode"));
         yourSpec.setContent(yourIntent);
-
-
-        tabHost.addTab(EnemySpec);
-        tabHost.addTab(yourSpec);
-
-        changeBackgroundRunable.run();
-        randomItemRunable.run();
+        timeCountdownThread.run();
 
         if(getIntent().getStringExtra("isHost").equals("0")){
             Bluetooth.setYourTurn(false);
@@ -81,6 +77,12 @@ public class InGameActivity extends TabActivity {
         else{
             Bluetooth.setYourTurn(true);
         }
+
+        tabHost.addTab(EnemySpec);
+        tabHost.addTab(yourSpec);
+
+        changeBackgroundRunable.run();
+        randomItemRunable.run();
 
         tabHost.setCurrentTab(1);
         btnYourMap.setSelected(true);
@@ -142,31 +144,48 @@ public class InGameActivity extends TabActivity {
     private Runnable randomItemRunable = new Runnable() {
         @Override
         public void run() {
-
             if(isRun == 0){
                 mHandler.removeCallbacks(this);
             }
             else {
-                Log.d("my-debug", "random" + Bluetooth.getDataSending());
-                if(Bluetooth.getYourTurn() && !InfoMatch.getIsRandomItem()){
-                   // Log.d("my-debug", "random");
-                        turn++;
-
-                        if (turn % 1 == 0) {
-                            Random random = new Random();
-                            Integer index = random.nextInt(listItemUser.size());
-                            Item skill = listItemUser.get(index);
-                            Log.d("my-debug", "random skill");
-                            imageViewSpell1.setImageResource(getResources().getIdentifier(skill.getImageName(), "drawable", getPackageName()));
-                            InfoMatch.setIsRandomItem(true);
-
-                        }
-
-                       // Bluetooth.setDataSending("");
+                int turn = InfoMatch.getTurn();
+                Log.d("my-debuger", "turn:" + turn);
+                if(Bluetooth.getYourTurn() && !InfoMatch.getIsRandomItem() || Integer.parseInt(getIntent().getStringExtra("Mode")) != 1 && !InfoMatch.getIsRandomItem()){
+                    if (InfoMatch.getTurn() % 5 == 0) {
+                        Random random = new Random();
+                        Integer index = random.nextInt(listItemUser.size());
+                        Item skill = listItemUser.get(index);
+                        imageViewSpell1.setImageResource(getResources().getIdentifier(skill.getImageName(), "drawable", getPackageName()));
+                        InfoMatch.setIsRandomItem(true);
+                    }
+                    // Bluetooth.setDataSending("");
+                }
+                if (InfoMatch.isIsChangeTurn()){
+                    timeCountdown = 60;
+                    InfoMatch.setIsChangeTurn(false);
                 }
                 mHandler.postDelayed(this, 200);
             }
 
+        }
+    };
+
+    private Runnable timeCountdownThread = new Runnable() {
+        @Override
+        public void run() {
+            if(isRun == 0){
+                mHandler.removeCallbacks(this);
+            }
+            else {
+                timeCountdown = timeCountdown - 1;
+                textViewTimeCoundoutTurn.setText("" + timeCountdown);
+                if(timeCountdown <= 0){
+                    InfoMatch.setIsTimeOut(true);
+                }
+                else{
+                    mHandler.postDelayed(this, 1000);
+                }
+            }
         }
     };
 }

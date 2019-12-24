@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // initDatabase();
+//        initDatabase();
         setting = new Helper(getApplication()).getSetting();
         setLocale(setting.getLanguage());
         setContentView(R.layout.activity_main);

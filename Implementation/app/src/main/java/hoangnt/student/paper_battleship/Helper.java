@@ -4,6 +4,7 @@ import android.app.Application;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
@@ -140,47 +141,47 @@ public class Helper {
         return arrBoolean;
     }
 
-    public void drawShip(TextView tv, int value){
+    public void drawShip(ImageView img, int value){
         switch (value){
-            case 1: tv.setBackgroundResource(R.drawable.ship_1);
+            case 1: img.setBackgroundResource(R.drawable.ship_1);
                 break;
-            case 2: tv.setBackgroundResource(R.drawable.ship_2_1);
+            case 2: img.setBackgroundResource(R.drawable.ship_2_1);
                 break;
-            case 3: tv.setBackgroundResource(R.drawable.ship_2_2);
+            case 3: img.setBackgroundResource(R.drawable.ship_2_2);
                 break;
-            case 4: tv.setBackgroundResource(R.drawable.ship_3_1);
+            case 4: img.setBackgroundResource(R.drawable.ship_3_1);
                 break;
-            case 5: tv.setBackgroundResource(R.drawable.ship_3_2);
+            case 5: img.setBackgroundResource(R.drawable.ship_3_2);
                 break;
-            case 6: tv.setBackgroundResource(R.drawable.ship_3_3);
+            case 6: img.setBackgroundResource(R.drawable.ship_3_3);
                 break;
-            case 7: tv.setBackgroundResource(R.drawable.ship_4_1);
+            case 7: img.setBackgroundResource(R.drawable.ship_4_1);
                 break;
-            case 8: tv.setBackgroundResource(R.drawable.ship_4_2);
+            case 8: img.setBackgroundResource(R.drawable.ship_4_2);
                 break;
-            case 9: tv.setBackgroundResource(R.drawable.ship_4_3);
+            case 9: img.setBackgroundResource(R.drawable.ship_4_3);
                 break;
-            case 10: tv.setBackgroundResource(R.drawable.ship_4_4);
+            case 10: img.setBackgroundResource(R.drawable.ship_4_4);
                 break;
-            case 21: tv.setBackgroundResource(R.drawable.n_ship_1);
+            case 21: img.setBackgroundResource(R.drawable.n_ship_1);
                 break;
-            case 22: tv.setBackgroundResource(R.drawable.n_ship_2_2);
+            case 22: img.setBackgroundResource(R.drawable.n_ship_2_2);
                 break;
-            case 23: tv.setBackgroundResource(R.drawable.n_ship_2_1);
+            case 23: img.setBackgroundResource(R.drawable.n_ship_2_1);
                 break;
-            case 24: tv.setBackgroundResource(R.drawable.n_ship_3_3);
+            case 24: img.setBackgroundResource(R.drawable.n_ship_3_3);
                 break;
-            case 25: tv.setBackgroundResource(R.drawable.n_ship_3_2);
+            case 25: img.setBackgroundResource(R.drawable.n_ship_3_2);
                 break;
-            case 26: tv.setBackgroundResource(R.drawable.n_ship_3_1);
+            case 26: img.setBackgroundResource(R.drawable.n_ship_3_1);
                 break;
-            case 27: tv.setBackgroundResource(R.drawable.n_ship_4_4);
+            case 27: img.setBackgroundResource(R.drawable.n_ship_4_4);
                 break;
-            case 28: tv.setBackgroundResource(R.drawable.n_ship_4_3);
+            case 28: img.setBackgroundResource(R.drawable.n_ship_4_3);
                 break;
-            case 29: tv.setBackgroundResource(R.drawable.n_ship_4_2);
+            case 29: img.setBackgroundResource(R.drawable.n_ship_4_2);
                 break;
-            case 30: tv.setBackgroundResource(R.drawable.n_ship_4_1);
+            case 30: img.setBackgroundResource(R.drawable.n_ship_4_1);
                 break;
         }
     }

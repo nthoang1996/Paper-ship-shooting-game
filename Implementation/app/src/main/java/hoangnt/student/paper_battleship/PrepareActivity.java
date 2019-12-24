@@ -12,12 +12,14 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class PrepareActivity extends AppCompatActivity implements Serializable {
     GridView grv_board;
@@ -34,11 +36,10 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
     int forceDeleteShip = 0;
     private Handler mHandler = new Handler();
     int isRun = 1;
-    TextView textViewTimeCountdown;
+    TextView textViewTimeCountdown, textViewTimeRemain;
     int timeCountdown = 60;
     LinearLayout layoutMap;
     int[] statusMap;
-    BluetoothConnectionService mBluetoothConnection;
     Boolean isReady;
 
     @Override
@@ -59,6 +60,8 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         btnReady = (Button) findViewById(R.id.btnReady);
         tvCheckReadyOfYou = findViewById(R.id.checkReadyofYou);
         tvCheckReadyOfYourEnemy = findViewById(R.id.checkReadyofYourEnemy);
+        textViewTimeCountdown = (TextView) findViewById(R.id.textViewCountdown);
+        textViewTimeRemain = (TextView) findViewById(R.id.tvTimeRemain);
         layoutMap = findViewById(R.id.layoutMap);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -66,14 +69,15 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         if (mode != 1){
             tvCheckReadyOfYou.setVisibility(View.INVISIBLE);
             tvCheckReadyOfYourEnemy.setVisibility(View.INVISIBLE);
+            textViewTimeRemain.setVisibility(View.INVISIBLE);
+            textViewTimeCountdown.setVisibility(View.INVISIBLE);
+            btnReady.setText(R.string.start_text);
         }
         else{
             tvCheckReadyOfYou.setBackgroundColor(Color.RED);
             tvCheckReadyOfYourEnemy.setBackgroundColor(Color.RED);
         }
-        mBluetoothConnection = (BluetoothConnectionService) getIntent().getSerializableExtra("myBT");
 
-        textViewTimeCountdown = (TextView) findViewById(R.id.textViewCountdown);
         statusMap = new int[50];
         final int[] valueMap = new int[50];
         for(int i = 0; i< 50; i++){
@@ -98,7 +102,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     selectedShip = 1;
                     disableShipPlaced();
                     resetSelection();
-                    btnShip111.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                    btnShip111.setBackgroundResource(R.drawable.selected_ship_1);
                 }
             }
         });
@@ -110,7 +114,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     selectedShip = 2;
                     disableShipPlaced();
                     resetSelection();
-                    btnShip112.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                    btnShip112.setBackgroundResource(R.drawable.selected_ship_1);
                 }
             }
         });
@@ -122,7 +126,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     selectedShip = 3;
                     disableShipPlaced();
                     resetSelection();
-                    btnShip113.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                    btnShip113.setBackgroundResource(R.drawable.selected_ship_1);
                 }
             }
         });
@@ -134,7 +138,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     selectedShip = 4;
                     disableShipPlaced();
                     resetSelection();
-                    btnShip121.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                    btnShip121.setBackgroundResource(R.drawable.selected_ship_2);
                 }
             }
         });
@@ -146,7 +150,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     selectedShip = 5;
                     disableShipPlaced();
                     resetSelection();
-                    btnShip122.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                    btnShip122.setBackgroundResource(R.drawable.selected_ship_2);
                 }
             }
         });
@@ -158,7 +162,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     selectedShip = 6;
                     disableShipPlaced();
                     resetSelection();
-                    btnShip131.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                    btnShip131.setBackgroundResource(R.drawable.selected_ship_3);
                 }
             }
         });
@@ -171,7 +175,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     selectedShip = 7;
                     disableShipPlaced();
                     resetSelection();
-                    btnShip141.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                    btnShip141.setBackgroundResource(R.drawable.selected_ship_4);
                 }
             }
         });
@@ -187,7 +191,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     isRun = 0;
                     Ship[] listEnemeyShip = new Ship[7];
                     ArrayList<String> listEnemyData = new ArrayList<String>();
-                    initShip(listEnemeyShip);
+                    listEnemeyShip = generateListEnemyShip();
                     for (int i=0; i<listEnemeyShip.length; i++){
                         listEnemyData.add(listEnemeyShip[i].toString());
                     }
@@ -195,6 +199,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     intent.putExtra("listShip", listData);
                     intent.putExtra("listEnemyShip", listEnemyData);
                     intent.putExtra("isHost", getIntent().getStringExtra("isHost"));
+                    intent.putExtra("Mode", "0");
                     startActivity(intent);
                 }
                 else{
@@ -225,10 +230,11 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                         switch (type){
                             case 1:
                                 if(shipSelected.getOrigentation() == 1){
+                                    shipSelected.setId_part(0,1);
                                     setShipAtPosition(parent,position,0, shipSelected.getId_part().get(0), false, valueMap, selectedShip);
                                 }
                                 else {
-                                    shipSelected.setId_part(1,21);
+                                    shipSelected.setId_part(0,21);
                                     setShipAtPosition(parent,position,0, shipSelected.getId_part().get(0), false, valueMap, selectedShip);
                                 }
                                 break;
@@ -420,6 +426,432 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         getListSkillUser();
     }
 
+    public Ship[] generateListEnemyShip(){
+        Ship[] listEnemyShip = new Ship[7];
+        ArrayList<String> listPosition = new ArrayList<String>();
+        for(int i = 0; i<50 ; i++){
+            listPosition.add("" + i);
+        }
+        initShip(listEnemyShip);
+        int index = 0;
+        while (index < 7){
+            Random rand = new Random();
+            int position = rand.nextInt(listPosition.size());
+            int orientation = rand.nextInt(2);
+            if(!verifyPosition(listPosition, position, orientation, listEnemyShip[index].getType())){
+                continue;
+            }
+            listEnemyShip[index].setOrigentation(orientation);
+            if(listEnemyShip[index].getType() == 1){
+                if(orientation == 1){
+                    listEnemyShip[index].setId_part(0,1);
+                    listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                }
+                else {
+                    listEnemyShip[index].setId_part(0,21);
+                    listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                }
+                listPosition.remove(listPosition.get(position));
+            }
+            else if(listEnemyShip[index].getType() == 2){
+                if(orientation == 1){
+                    if(Integer.parseInt(listPosition.get(position)) < 45){
+                        int pos1 = Integer.parseInt(listPosition.get(position))+5;
+                        listEnemyShip[index].setId_part(0,2);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,3);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                    }
+                    else {
+                        int pos1 = Integer.parseInt(listPosition.get(position)) - 5;
+                        listEnemyShip[index].setId_part(0,3);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,2);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                    }
+                }
+                else {
+                    if (Integer.parseInt(listPosition.get(position)) % 5 == 4){
+                        int pos1 = Integer.parseInt(listPosition.get(position)) - 1;
+                        listEnemyShip[index].setId_part(0,22);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,23);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                    }
+                    else {
+                        int pos1 = Integer.parseInt(listPosition.get(position)) + 1;
+                        listEnemyShip[index].setId_part(0,23);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,22);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                    }
+                }
+            }
+            else if(listEnemyShip[index].getType() == 3){
+                if(orientation == 1){
+                    if(Integer.parseInt(listPosition.get(position)) < 5){
+                        int pos1 = Integer.parseInt(listPosition.get(position)) + 5;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) + 10;
+                        listEnemyShip[index].setId_part(0,4);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,5);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,6);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                    }
+                    else if(Integer.parseInt(listPosition.get(position)) > 44){
+                        int pos1 = Integer.parseInt(listPosition.get(position)) - 5;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) - 10;
+                        listEnemyShip[index].setId_part(0,6);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,5);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,4);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                    }
+                    else {
+                        int pos1 = Integer.parseInt(listPosition.get(position)) + 5;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) - 5;
+                        listEnemyShip[index].setId_part(0,5);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,6);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,4);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                    }
+                }
+                else {
+                    if (Integer.parseInt(listPosition.get(position)) % 5 == 4){
+                        int pos1 = Integer.parseInt(listPosition.get(position)) - 1;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) - 2;
+                        listEnemyShip[index].setId_part(0,24);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,25);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,26);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                    }
+                    else if (Integer.parseInt(listPosition.get(position)) % 5 == 0){
+                        int pos1 = Integer.parseInt(listPosition.get(position)) + 1;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) + 2;
+                        listEnemyShip[index].setId_part(0,26);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,25);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,24);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                    }
+                    else {
+                        int pos1 = Integer.parseInt(listPosition.get(position)) + 1;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) - 1;
+                        listEnemyShip[index].setId_part(0,25);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,24);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,26);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                    }
+                }
+            }
+            else {
+                if(orientation == 1){
+                    if(Integer.parseInt(listPosition.get(position)) < 5){
+                        int pos1 = Integer.parseInt(listPosition.get(position)) + 5;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) +15;
+                        int pos3 = Integer.parseInt(listPosition.get(position)) +10;
+                        listEnemyShip[index].setId_part(0,7);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,8);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,10);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                        listEnemyShip[index].setId_part(3,9);
+                        listEnemyShip[index].setPosition(3, pos3);
+                        listPosition.remove("" + pos3);
+                    }
+                    else if(Integer.parseInt(listPosition.get(position)) > 39){
+                        if(Integer.parseInt(listPosition.get(position)) > 44){
+                            int pos1 = Integer.parseInt(listPosition.get(position)) - 10;
+                            int pos2 = Integer.parseInt(listPosition.get(position)) - 5;
+                            int pos3 = Integer.parseInt(listPosition.get(position)) - 15;
+                            listEnemyShip[index].setId_part(0,10);
+                            listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                            listPosition.remove(listPosition.get(position));
+                            listEnemyShip[index].setId_part(1,8);
+                            listEnemyShip[index].setPosition(1, pos1);
+                            listPosition.remove("" + pos1);
+                            listEnemyShip[index].setId_part(2,9);
+                            listEnemyShip[index].setPosition(2, pos2);
+                            listPosition.remove("" + pos2);
+                            listEnemyShip[index].setId_part(3,7);
+                            listEnemyShip[index].setPosition(3, pos3);
+                            listPosition.remove("" + pos3);
+                        }
+                        else {
+                            int pos1 = Integer.parseInt(listPosition.get(position)) + 5;
+                            int pos2 = Integer.parseInt(listPosition.get(position)) - 5;
+                            int pos3 = Integer.parseInt(listPosition.get(position)) - 10;
+                            listEnemyShip[index].setId_part(0,9);
+                            listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                            listPosition.remove(listPosition.get(position));
+                            listEnemyShip[index].setId_part(1,10);
+                            listEnemyShip[index].setPosition(1, pos1);
+                            listPosition.remove("" + pos1);
+                            listEnemyShip[index].setId_part(2,8);
+                            listEnemyShip[index].setPosition(2, pos2);
+                            listPosition.remove("" + pos2);
+                            listEnemyShip[index].setId_part(3,7);
+                            listEnemyShip[index].setPosition(3, pos3);
+                            listPosition.remove("" + pos3);
+                        }
+                    }
+                    else {
+                        int pos1 = Integer.parseInt(listPosition.get(position)) + 5;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) - 5;
+                        int pos3 = Integer.parseInt(listPosition.get(position)) + 10;
+                        listEnemyShip[index].setId_part(0,8);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,9);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,7);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                        listEnemyShip[index].setId_part(3,10);
+                        listEnemyShip[index].setPosition(3, pos3);
+                        listPosition.remove("" + pos3);
+                    }
+                }
+                else {
+                    if (Integer.parseInt(listPosition.get(position)) % 5 == 4){
+                        int pos1 = Integer.parseInt(listPosition.get(position)) - 2;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) - 1;
+                        int pos3 = Integer.parseInt(listPosition.get(position)) - 3;
+                        listEnemyShip[index].setId_part(0,27);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,29);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,28);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                        listEnemyShip[index].setId_part(3,30);
+                        listEnemyShip[index].setPosition(3, pos3);
+                        listPosition.remove("" + pos3);
+                    }
+                    else if(Integer.parseInt(listPosition.get(position)) % 5 == 3){
+                        int pos1 = Integer.parseInt(listPosition.get(position)) + 1;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) - 1;
+                        int pos3 = Integer.parseInt(listPosition.get(position)) - 2;
+                        listEnemyShip[index].setId_part(0,28);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,27);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,29);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                        listEnemyShip[index].setId_part(3,30);
+                        listEnemyShip[index].setPosition(3, pos3);
+                        listPosition.remove("" + pos3);
+                    }
+                    else if (Integer.parseInt(listPosition.get(position)) % 5 == 0){
+                        int pos1 = Integer.parseInt(listPosition.get(position)) + 1;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) + 3;
+                        int pos3 = Integer.parseInt(listPosition.get(position)) + 2;
+                        listEnemyShip[index].setId_part(0,30);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,29);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,27);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                        listEnemyShip[index].setId_part(3,28);
+                        listEnemyShip[index].setPosition(3, pos3);
+                        listPosition.remove("" + pos3);
+                    }
+                    else {
+                        int pos1 = Integer.parseInt(listPosition.get(position)) + 1;
+                        int pos2 = Integer.parseInt(listPosition.get(position)) - 1;
+                        int pos3 = Integer.parseInt(listPosition.get(position)) + 2;
+                        listEnemyShip[index].setId_part(0,29);
+                        listEnemyShip[index].setPosition(0, Integer.parseInt(listPosition.get(position)));
+                        listPosition.remove(listPosition.get(position));
+                        listEnemyShip[index].setId_part(1,28);
+                        listEnemyShip[index].setPosition(1, pos1);
+                        listPosition.remove("" + pos1);
+                        listEnemyShip[index].setId_part(2,30);
+                        listEnemyShip[index].setPosition(2, pos2);
+                        listPosition.remove("" + pos2);
+                        listEnemyShip[index].setId_part(3,27);
+                        listEnemyShip[index].setPosition(3, pos3);
+                        listPosition.remove("" + pos3);
+                    }
+                }
+            }
+            index ++;
+        }
+
+        return  listEnemyShip;
+    }
+
+    public boolean verifyPosition(ArrayList<String> listPosition, int position, int orientation, int typeShip){
+        if(typeShip == 1){
+            return true;
+        }
+        if(typeShip == 2){
+            if(orientation == 1){
+                if(Integer.parseInt(listPosition.get(position)) < 45){
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+5))){
+                        return false;
+                    }
+                }
+                else {
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-5))){
+                        return false;
+                    }
+                }
+                return  true;
+            }
+            else {
+                if (Integer.parseInt(listPosition.get(position)) % 5 == 4){
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-1))){
+                        return false;
+                    }
+                }
+                else {
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+1))){
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        if (typeShip == 3){
+            if(orientation == 1){
+                if(Integer.parseInt(listPosition.get(position)) < 5){
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+5)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+10))){
+                        return false;
+                    }
+                }
+                else if(Integer.parseInt(listPosition.get(position)) > 44){
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-5)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-10))){
+                        return false;
+                    }
+                }
+                else {
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+5)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-5))){
+                        return false;
+                    }
+                }
+                return  true;
+            }
+            else {
+                if (Integer.parseInt(listPosition.get(position)) % 5 == 4){
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-1)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-2))){
+                        return false;
+                    }
+                }
+                else if (Integer.parseInt(listPosition.get(position)) % 5 == 0){
+                        if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+1)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position)) + 2))){
+                            return false;
+                        }
+                }
+                else {
+                    if (!listPosition.contains("" + (Integer.parseInt(listPosition.get(position)) + 1)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position)) - 1))) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        if(typeShip == 4){
+            if(orientation == 1){
+                if(Integer.parseInt(listPosition.get(position)) < 5){
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+5)) || !listPosition.contains("" +(Integer.parseInt(listPosition.get(position))+10)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+15))){
+                        return false;
+                    }
+                }
+                else if(Integer.parseInt(listPosition.get(position)) > 39){
+                    if(Integer.parseInt(listPosition.get(position)) > 44){
+                        if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-5)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-10)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-15))){
+                            return false;
+                        }
+                    }
+                    else {
+                        if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-5)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-10)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position)) + 5))){
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+5)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-5)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+10))){
+                        return false;
+                    }
+                }
+                return  true;
+            }
+            else {
+                if (Integer.parseInt(listPosition.get(position)) % 5 == 4){
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-1)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-2)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-3))){
+                        return false;
+                    }
+                }
+                else if(Integer.parseInt(listPosition.get(position)) % 5 == 3){
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+1)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position)) - 1)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position)) - 2))){
+                        return false;
+                    }
+                }
+                else if(Integer.parseInt(listPosition.get(position)) % 5 == 0){
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+1)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position)) + 2)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+ 3))){
+                        return false;
+                    }
+                }
+                else {
+                    if(!listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+1)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))-1)) || !listPosition.contains("" + (Integer.parseInt(listPosition.get(position))+2))){
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return  true;
+    }
+
     private void getListSkillUser(){
         ArrayList<Item> listItem = new Helper(getApplication()).getListItem();
         InfoMatch.listItemUser = new ArrayList<Item>();
@@ -454,7 +886,10 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
     private Runnable timeCountdownThread = new Runnable() {
         @Override
         public void run() {
-            if(Bluetooth.getIsBond() || getIntent().getStringExtra("Mode").equals("0")){
+            if(isRun == 0){
+                mHandler.removeCallbacks(this);
+            }
+            else if(Bluetooth.getIsBond() || getIntent().getStringExtra("Mode").equals("0")){
                 if(timeCountdown == 60){
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 }
@@ -469,6 +904,17 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                                 shipSelected.getPosition().get(0),
                                 grv_board.getAdapter().getItemId(shipSelected.getPosition().get(0)));
                     }
+                    isReady= true;
+                    ArrayList<String> listData = new ArrayList<String>();
+                    for (int i=0; i<listShip.length; i++){
+                        listData.add(listShip[i].toString());
+                    }
+                    String data= "";
+                    for(int i =0; i < listData.size(); i++)
+                    {
+                        data = data + listData.get(i) + "-------";
+                    }
+                    Bluetooth.getBluetoothConnection().write(data.getBytes(Charset.defaultCharset()));
                     mHandler.removeCallbacks(this);
                 }
                 else{
@@ -571,43 +1017,43 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
 
     public void resetSelection(){
         if(!btnShip111.isEnabled()){
-            btnShip111.setBackgroundColor(Color.RED);
+            btnShip111.setBackgroundResource(R.drawable.done_ship_1);
         }
         else {
             btnShip111.setBackgroundResource(R.drawable.ship_1);
         }
         if(!btnShip112.isEnabled()){
-            btnShip112.setBackgroundColor(Color.RED);
+            btnShip112.setBackgroundResource(R.drawable.done_ship_1);
         }
         else {
             btnShip112.setBackgroundResource(R.drawable.ship_1);
         }
         if(!btnShip113.isEnabled()){
-            btnShip113.setBackgroundColor(Color.RED);
+            btnShip113.setBackgroundResource(R.drawable.done_ship_1);
         }
         else {
             btnShip113.setBackgroundResource(R.drawable.ship_1);
         }
         if(!btnShip121.isEnabled()){
-            btnShip121.setBackgroundColor(Color.RED);
+            btnShip121.setBackgroundResource(R.drawable.done_ship_2);
         }
         else {
             btnShip121.setBackgroundResource(R.drawable.ship_2);
         }
         if(!btnShip122.isEnabled()){
-            btnShip122.setBackgroundColor(Color.RED);
+            btnShip122.setBackgroundResource(R.drawable.done_ship_2);
         }
         else {
             btnShip122.setBackgroundResource(R.drawable.ship_2);
         }
         if(!btnShip131.isEnabled()){
-            btnShip131.setBackgroundColor(Color.RED);
+            btnShip131.setBackgroundResource(R.drawable.done_ship_3);
         }
         else {
             btnShip131.setBackgroundResource(R.drawable.ship_3);
         }
         if(!btnShip141.isEnabled()){
-            btnShip141.setBackgroundColor(Color.RED);
+            btnShip141.setBackgroundResource(R.drawable.done_ship_4);
         }
         else {
             btnShip141.setBackgroundResource(R.drawable.ship_4);
@@ -638,8 +1084,8 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
 
     public void setShipAtPosition(AdapterView<?> parent, int position, int index, int value, boolean isRecover, int[] valueMap, int selectedShip){
         View childView=  (View)parent.getChildAt(position);
-        TextView textView = childView.findViewById(R.id.cell_grid);
-        new Helper(getApplication()).drawShip(textView, value);
+        ImageView img = childView.findViewById(R.id.cell_grid);
+        new Helper(getApplication()).drawShip(img, value);
         listShip[selectedShip-1].getPosition().set(index, position);
         listShip[selectedShip-1].getStatus().set(index, true);
         statusMap[position] +=1;
@@ -650,8 +1096,8 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
 
     public void deleteShipAtOldPosition(AdapterView<?> parent, int position, int index, int[] valueMap, int selectedShip){
         View childView=  (View)parent.getChildAt(position);
-        TextView textView = childView.findViewById(R.id.cell_grid);
-        textView.setBackgroundColor(Color.TRANSPARENT);
+        ImageView img = childView.findViewById(R.id.cell_grid);
+        img.setBackgroundColor(Color.TRANSPARENT);
         listShip[selectedShip-1].getPosition().set(index, position);
         statusMap[position] = 0;
         valueMap[position] -= listShip[selectedShip-1].getId_part().get(index);
@@ -660,8 +1106,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
         }
     }
 
-    public boolean isDuplicatedShip()
-    {
+    public boolean isDuplicatedShip() {
         for(int i = 0;i<50;i++){
             if(statusMap[i] == 2){
                 return true;
@@ -725,6 +1170,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
                     intent.putExtra("listEnemyShip", enemeyData);
                     intent.putExtra("isHost", getIntent().getStringExtra("isHost"));
                     Bluetooth.setDataSending("");
+                    isRun = 0;
                     startActivity(intent);
                 }
                 else if(!Bluetooth.getDataSending().isEmpty()){

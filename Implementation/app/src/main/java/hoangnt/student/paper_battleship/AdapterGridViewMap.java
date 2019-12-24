@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class AdapterGridViewMap  extends BaseAdapter {
@@ -27,7 +28,7 @@ public class AdapterGridViewMap  extends BaseAdapter {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     private class ViewHolder{
-        TextView cell;
+        ImageView cell;
     }
 
     @Override
@@ -69,13 +70,13 @@ public class AdapterGridViewMap  extends BaseAdapter {
         if(convertView == null){
             holder = new ViewHolder();
             convertView = inflater.inflate(layout, null);
-            holder.cell = (TextView) convertView.findViewById(R.id.cell_grid);
+            holder.cell = (ImageView) convertView.findViewById(R.id.cell_grid);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder)convertView.getTag();
         }
         if(statusMap[position] > 0){
-            if((statusMap[position] > 0 && statusMap[position] <= 10) || (statusMap[position] > 21 && statusMap[position] <= 30)){
+            if((statusMap[position] > 0 && statusMap[position] <= 10) || (statusMap[position] >= 21 && statusMap[position] <= 30)){
                 if(idMap == 1){
                     holder.cell.setBackgroundResource(getIdImage(statusMap[position]));
                 }
@@ -87,6 +88,9 @@ public class AdapterGridViewMap  extends BaseAdapter {
                 else {
                     holder.cell.setBackgroundResource(getIdImage(statusMap[position]-11));
                 }
+            }
+            else if(statusMap[position] == 20){
+                holder.cell.setBackgroundResource(R.drawable.shooted);
             }
             else {
                 holder.cell.setBackgroundResource(R.drawable.x);
@@ -121,6 +125,7 @@ public class AdapterGridViewMap  extends BaseAdapter {
             case 29: return R.drawable.n_ship_4_2;
             case 30: return R.drawable.n_ship_4_1;
             case 50: return R.drawable.x;
+            case 20: return R.drawable.shooted;
             case 101: return R.drawable.shipbr_1;
             case 102: return R.drawable.shipbr_2_1;
             case 103: return R.drawable.shipbr_2_2;
