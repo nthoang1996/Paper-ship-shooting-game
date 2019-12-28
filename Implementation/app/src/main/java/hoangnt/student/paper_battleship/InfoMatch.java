@@ -3,35 +3,11 @@ package hoangnt.student.paper_battleship;
 import java.util.ArrayList;
 
 public class InfoMatch {
-
-    public static ArrayList<Item> listAllItem ;
-
     public static Ship[] listEnemyShip;
 
     public static boolean isRandomItem = false;
 
     public static int turn = 1;
-
-    public static int isShooting = 0;
-
-    public static int numberSpell=0;
-
-    public static Item[] currentSpells;
-
-    public static void setCurrentSpell(Item item, int index){ currentSpells[index] = item;}
-
-    public static void setNumberSpell(int numberSpell) {
-        InfoMatch.numberSpell = numberSpell;
-        currentSpells = new Item[numberSpell];
-    }
-
-    public static int getNumberSpell(){return numberSpell;}
-
-    public static  Item getCurrentSpell(int index){ return currentSpells[index];}
-
-    public static void setIsShooting(int value){isShooting = value;}
-
-    public static int getIsShooting(){return isShooting;}
 
     public static boolean getIsRandomItem() {return  isRandomItem;}
 
@@ -65,9 +41,9 @@ public class InfoMatch {
         InfoMatch.isChangeTurn = isChangeTurn;
     }
 
-    public static void setListAllItem(ArrayList<Item> list){listAllItem = list;}
-
-    public static Item getItemFromAllItem(int index) {return listAllItem.get(index);}
+    public static boolean isIsRandomItem() {
+        return isRandomItem;
+    }
 
     public static int getTurn() {
         return turn;
@@ -76,8 +52,6 @@ public class InfoMatch {
     public static void setTurn(int turn) {
         InfoMatch.turn = turn;
     }
-
-
 
     public static void setListItemUser(ArrayList<Item> listItemUser) {
         InfoMatch.listItemUser = listItemUser;

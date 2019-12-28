@@ -70,71 +70,47 @@ public class PlayerMap extends AppCompatActivity {
         adapter = new AdapterGridViewMap(this, R.layout.map_cell, listShip, statusMap, idMap);
         myGridView.setAdapter(adapter);
 
-
-
         final Ship[] finalListShip = listShip;
         myGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(getIntent().getStringExtra("Map").equals("Enemy") && Bluetooth.getYourTurn() && selectedMap[position] != 1){
-                    if(InfoMatch.getIsShooting() == 0)
-                    {
-
-                        Bluetooth.setYourTurn(false);
-                        InfoMatch.setIsRandomItem(false);
-                        InfoMatch.setIsChangeTurn(true);
-                        InfoMatch.setTurn(InfoMatch.getTurn() + 1);
-                        String command = "shoot:"+ position;
-                        if(Integer.parseInt(getIntent().getStringExtra("Mode")) == 1){
+                    Bluetooth.setYourTurn(false);
+                    InfoMatch.setIsRandomItem(false);
+                    InfoMatch.setIsChangeTurn(true);
+                    InfoMatch.setTurn(InfoMatch.getTurn() + 1);
+                    String command = ""+ position;
+                    if(Integer.parseInt(getIntent().getStringExtra("Mode")) == 1){
                         Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
-                    } else {
+                    }
+                    else {
 
-                        }
-                        View childView=  (View)parent.getChildAt(position);
-                        ImageView img = childView.findViewById(R.id.cell_grid);
+                    }
+                    View childView=  (View)parent.getChildAt(position);
+                    ImageView img = childView.findViewById(R.id.cell_grid);
+                    img.setBackgroundResource(R.drawable.shooted);
+                    shootAnimation = (AnimationDrawable) img.getDrawable();
+                    if(statusMap[position] >=1 && statusMap[position] <=10 || statusMap[position] >= 21 && statusMap[position] <=30){
+                        statusMap[position] += 50;
+                        img.setBackgroundResource(R.drawable.x);
+                    }
+                    else {
+                        statusMap[position] += 20;
                         img.setBackgroundResource(R.drawable.shooted);
-                        shootAnimation = (AnimationDrawable) img.getDrawable();
-                        if(statusMap[position] >=1 && statusMap[position] <=10 || statusMap[position] >= 21 && statusMap[position] <=30){
-                            statusMap[position] += 50;
-                            img.setBackgroundResource(R.drawable.x);
-                        }
-                        else {
-
-                            statusMap[position] += 20;
-                            img.setBackgroundResource(R.drawable.shooted);
-                        }
-                        selectedMap[position] = 1;
-                        isShootToShip(finalListShip, position, 0);
-                        checkAnyShipDestroyed(finalListShip);
-
-                        if(checkFinish(listShip, 1) == 1){
-                            Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
-                            intent.putExtra("context", "1");
-                            intent.putExtra("exp", "" + caculatorExp(listShip));
-                            startActivity(intent);
-                        }
                     }
-                    else{
+                    selectedMap[position] = 1;
+                    isShootToShip(finalListShip, position, 0);
+                    checkAnyShipDestroyed(finalListShip);
 
-
-                        Item spell = InfoMatch.getCurrentSpell(InfoMatch.getIsShooting() -1);
-
-                        View childView=  (View)parent.getChildAt(position);
-                        ImageView img = childView.findViewById(R.id.cell_grid);
-                        img.setBackgroundResource(getResources().getIdentifier(spell.getImageName(), "drawable", getPackageName()));
-                        String command = "useSpell:"+position+":"+ spell.getLevel();
-                        if(Integer.parseInt(getIntent().getStringExtra("Mode")) == 1) {
-                            Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
-                        }
-                        InfoMatch.setCurrentSpell(null, InfoMatch.getIsShooting() -1 );
-                        InfoMatch.setIsShooting(0);
-
+                    if(checkFinish(listShip, 1) == 1){
+                        Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
+                        intent.putExtra("context", "1");
+                        intent.putExtra("exp", "" + caculatorExp(listShip));
+                        startActivity(intent);
                     }
-
                 }
             }
         });
-
         listenerRunable.run();
 //        listenerTimeoutRunable.run();
     }
@@ -225,43 +201,27 @@ public class PlayerMap extends AppCompatActivity {
                 mHandler.removeCallbacks(this);
             }
             else {
-
                 if(!Bluetooth.getDataSending().isEmpty()){
-                    String message = Bluetooth.getDataSending();
-                    String[] tokens = message.split(":");
-
-                    if(tokens[0].equals("shoot")) {
-                        Bluetooth.setYourTurn(true);
-                        InfoMatch.setIsChangeTurn(true);
-                        if (getIntent().getStringExtra("Map").equals("Your")) {
-                            if (statusMap[Integer.parseInt(tokens[1])] >= 1 && statusMap[Integer.parseInt(tokens[1])] <= 10 || statusMap[Integer.parseInt(tokens[1])] >= 21 && statusMap[Integer.parseInt(tokens[1])] <= 30) {
-                                statusMap[Integer.parseInt(tokens[1])] += 61;
-                            } else {
-                                statusMap[Integer.parseInt(tokens[1])] += 20;
-                            }
-                            isShootToShip(listShip, Integer.parseInt(tokens[1]), 1);
-                            checkAnyShipDestroyed(listShip);
-                            adapter.notifyDataSetChanged();
-                            if (checkFinish(listShip, 2) == 2) {
-                                Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
-                                intent.putExtra("context", "2");
-                                intent.putExtra("exp", "" + caculatorExp(InfoMatch.getListEnemyShip()));
-                                startActivity(intent);
-
-                            }
+                    Bluetooth.setYourTurn(true);
+                    InfoMatch.setIsChangeTurn(true);
+                    if(getIntent().getStringExtra("Map").equals("Your")){
+                        if(statusMap[Integer.parseInt(Bluetooth.getDataSending())] >=1 && statusMap[Integer.parseInt(Bluetooth.getDataSending())] <=10 || statusMap[Integer.parseInt(Bluetooth.getDataSending())] >= 21 && statusMap[Integer.parseInt(Bluetooth.getDataSending())] <=30){
+                            statusMap[Integer.parseInt(Bluetooth.getDataSending())] += 61;
                         }
-                    }
-                    if(tokens[0].equals("useSpell")){
-                        if (getIntent().getStringExtra("Map").equals("Your")) {
-
-                            statusMap[Integer.parseInt(tokens[1])] += Integer.parseInt(tokens[2]);
-
-                            adapter.notifyDataSetChanged();
-
+                        else {
+                            statusMap[Integer.parseInt(Bluetooth.getDataSending())] += 20;
                         }
-                    }
+                        isShootToShip(listShip, Integer.parseInt(Bluetooth.getDataSending()), 1);
+                        checkAnyShipDestroyed(listShip);
+                        adapter.notifyDataSetChanged();
+                        if(checkFinish(listShip, 2) == 2){
+                            Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
+                            intent.putExtra("context", "2");
+                            intent.putExtra("exp", "" + caculatorExp(InfoMatch.getListEnemyShip()));
+                            startActivity(intent);
+                        }
                         Bluetooth.setDataSending("");
-
+                    }
                 }
                 else if(!Bluetooth.getYourTurn()){
                     Log.d("my-debuger", "Enter thread");
@@ -395,12 +355,4 @@ public class PlayerMap extends AppCompatActivity {
             }
         }
     };
-
-    private void useSpell(Item spell)
-    {
-     switch (spell.getLevel())  {
-         case 3:
-
-     }
-    }
 }

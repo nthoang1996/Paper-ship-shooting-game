@@ -21,7 +21,6 @@ public class InGameActivity extends TabActivity {
     private TabHost tabHost;
     private FrameLayout tabContent;
     TextView textViewTurn, textViewTimeCoundoutTurn;
-    ImageView[] imageViewSpells = new ImageView[3];
     ImageView imageViewSpell1, imageViewSpell2, imageViewSpell3;
     TextView textViewTime;
     Button btnSur;
@@ -40,9 +39,9 @@ public class InGameActivity extends TabActivity {
 
         textViewTurn = findViewById(R.id.textViewTurn);
         textViewTimeCoundoutTurn = findViewById(R.id.textViewCountdownTurn);
-        imageViewSpells[0] = imageViewSpell1 = findViewById(R.id.imgSpell1);
-        imageViewSpells[1] = imageViewSpell2 = findViewById(R.id.imgSpell2);
-        imageViewSpells[2] = imageViewSpell3 = findViewById(R.id.imgSpell3);
+        imageViewSpell1 = findViewById(R.id.imgSpell1);
+        imageViewSpell2 = findViewById(R.id.imgSpell2);
+        imageViewSpell3 = findViewById(R.id.imgSpell3);
         btnSur = findViewById(R.id.btnSur);
         btnMenu = findViewById(R.id.btnMenu);
         textViewTime = findViewById(R.id.textViewCountdownTurn);
@@ -94,32 +93,6 @@ public class InGameActivity extends TabActivity {
         btnEnemyMap.setSelected(true);
         btnEnemyMap.setBackgroundColor(Color.BLUE);
         btnYourMap.setBackgroundResource(android.R.drawable.btn_default);
-
-        imageViewSpells[0].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-               if(Bluetooth.getYourTurn() && InfoMatch.getCurrentSpell(0) != null)
-               {
-                   InfoMatch.setIsShooting(1);
-
-                   imageViewSpells[0].setImageResource(R.drawable.icon_lock);
-
-               }
-
-            }
-        });
-
-        imageViewSpells[1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //if(imageViewSpells[0].) return;
-
-                InfoMatch.setIsShooting(2);
-                imageViewSpells[1].setImageResource(R.drawable.icon_lock);
-            }
-        });
     }
 
     public void tabHandler(View target) {
@@ -171,7 +144,6 @@ public class InGameActivity extends TabActivity {
     private Runnable randomItemRunable = new Runnable() {
         @Override
         public void run() {
-            int nextPosition = 0;
             if(isRun == 0){
                 mHandler.removeCallbacks(this);
             }
@@ -179,13 +151,11 @@ public class InGameActivity extends TabActivity {
                 int turn = InfoMatch.getTurn();
                 Log.d("my-debuger", "turn:" + turn);
                 if(Bluetooth.getYourTurn() && !InfoMatch.getIsRandomItem() || Integer.parseInt(getIntent().getStringExtra("Mode")) != 1 && !InfoMatch.getIsRandomItem()){
-                    if (InfoMatch.getTurn() % 3 == 0) {
+                    if (InfoMatch.getTurn() % 5 == 0) {
                         Random random = new Random();
                         Integer index = random.nextInt(listItemUser.size());
                         Item skill = listItemUser.get(index);
-                        imageViewSpells[nextPosition].setImageResource(getResources().getIdentifier(skill.getImageName(), "drawable", getPackageName()));
-                      //imageViewSpell1.setImageResource(getResources().getIdentifier(skill.getImageName(), "drawable", getPackageName()));
-                        InfoMatch.setCurrentSpell(skill, nextPosition);
+                        imageViewSpell1.setImageResource(getResources().getIdentifier(skill.getImageName(), "drawable", getPackageName()));
                         InfoMatch.setIsRandomItem(true);
                     }
                     // Bluetooth.setDataSending("");

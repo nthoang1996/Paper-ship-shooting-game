@@ -3,7 +3,7 @@ package hoangnt.student.paper_battleship;
 public class Item {
     private String imageName;
     private int type;
-    private int level = 0;
+    private int level;
     private boolean unlock;
     private int desExp;
     private int curExp;

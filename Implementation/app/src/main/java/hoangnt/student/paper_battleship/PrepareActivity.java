@@ -854,9 +854,7 @@ public class PrepareActivity extends AppCompatActivity implements Serializable {
 
     private void getListSkillUser(){
         ArrayList<Item> listItem = new Helper(getApplication()).getListItem();
-        InfoMatch.setListAllItem(new Helper(getApplication()).getAllItem());
         InfoMatch.listItemUser = new ArrayList<Item>();
-        InfoMatch.setNumberSpell((listItem.size()+1)/10 + 1);
         for(int i =0; i< listItem.size(); i++){
             if(listItem.get(i).getType() == 0){
                 InfoMatch.listItemUser.add(listItem.get(i));
