@@ -76,6 +76,28 @@ public class Helper {
             db.close();
         }
         return listItem;
+
+    }
+
+    public ArrayList<Item> getAllItem(){
+        Cursor c1;
+        ArrayList<Item> listItem = new ArrayList<Item>();
+        try{
+            db = SQLiteDatabase.openDatabase(myDbPath, null,
+                    SQLiteDatabase.CREATE_IF_NECESSARY);
+
+            c1 = db.rawQuery("select * from tblLever", null);
+            c1.moveToPosition(-1);
+            while ( c1.moveToNext() ){
+                listItem.add(new Item(c1.getString(6), c1.getInt(5), c1.getInt(0), c1.getInt(1)==1, c1.getInt(2), c1.getInt(3), c1.getString(4)));
+            }
+        }catch (Exception ex){
+            Log.d("Db-Ex", ex.getMessage());
+        }finally {
+            db.close();
+        }
+        return listItem;
+
     }
 
     public ArrayList<BattleHistory> getListBattleHistory(){
