@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -114,24 +115,36 @@ public class PlayerMap extends AppCompatActivity {
                             startActivity(intent);
                         }
                     }
-                    else{
 
+                }
 
+                if(getIntent().getStringExtra("Map").equals("Your") && Bluetooth.getYourTurn() && selectedMap[position] != 1){
+                    if(InfoMatch.getIsShooting()!=0 && statusMap[position] == 0){
                         Item spell = InfoMatch.getCurrentSpell(InfoMatch.getIsShooting() -1);
 
                         View childView=  (View)parent.getChildAt(position);
                         ImageView img = childView.findViewById(R.id.cell_grid);
-                        img.setBackgroundResource(getResources().getIdentifier(spell.getImageName(), "drawable", getPackageName()));
-                        String command = "useSpell:"+position+":"+ spell.getLevel();
+                       // img.setBackgroundResource(getResources().getIdentifier(spell.getImageName(), "drawable", getPackageName()));
+                        String command = "useSpell:"+position+":"+ spell.getLevel()+":"+spell.getSpellName();
                         if(Integer.parseInt(getIntent().getStringExtra("Mode")) == 1) {
                             Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
                         }
+
+                       /* switch (spell.getLevel())
+                        {
+                            case 2:
+
+                                break;
+
+
+                        }*/
+                        statusMap[position] = 200+spell.getLevel();
+                        adapter.notifyDataSetChanged();
                         InfoMatch.setCurrentSpell(null, InfoMatch.getIsShooting() -1 );
                         InfoMatch.setIsShooting(0);
-
                     }
-
                 }
+
             }
         });
 
@@ -225,11 +238,11 @@ public class PlayerMap extends AppCompatActivity {
                 mHandler.removeCallbacks(this);
             }
             else {
-
                 if(!Bluetooth.getDataSending().isEmpty()){
+                    Log.d("use", getIntent().getStringExtra("Map"));
                     String message = Bluetooth.getDataSending();
                     String[] tokens = message.split(":");
-
+                    Log.d("message", tokens[0]);
                     if(tokens[0].equals("shoot")) {
                         Bluetooth.setYourTurn(true);
                         InfoMatch.setIsChangeTurn(true);
@@ -252,15 +265,17 @@ public class PlayerMap extends AppCompatActivity {
                         }
                     }
                     if(tokens[0].equals("useSpell")){
-                        if (getIntent().getStringExtra("Map").equals("Your")) {
-
-                            statusMap[Integer.parseInt(tokens[1])] += Integer.parseInt(tokens[2]);
-
+                        Log.d("use", getIntent().getStringExtra("Map"));
+                        if (getIntent().getStringExtra("Map").equals("Enemy")){
+                            /*Toast useSpell = Toast.makeText(getApplicationContext(),"Enemy use " + tokens[3],Toast.LENGTH_LONG);
+                            useSpell.show();*/
+                            statusMap[Integer.parseInt(tokens[1])] = 200+  Integer.parseInt(tokens[2]);
+                            Log.d("use", "used");
                             adapter.notifyDataSetChanged();
 
                         }
                     }
-                        Bluetooth.setDataSending("");
+                    Bluetooth.setDataSending("");
 
                 }
                 else if(!Bluetooth.getYourTurn()){

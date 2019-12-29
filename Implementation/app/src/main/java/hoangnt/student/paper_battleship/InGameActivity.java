@@ -20,6 +20,7 @@ import java.util.Random;
 public class InGameActivity extends TabActivity {
     private TabHost tabHost;
     private FrameLayout tabContent;
+
     TextView textViewTurn, textViewTimeCoundoutTurn;
     ImageView[] imageViewSpells = new ImageView[3];
     ImageView imageViewSpell1, imageViewSpell2, imageViewSpell3;
@@ -29,6 +30,7 @@ public class InGameActivity extends TabActivity {
     Button btnYourMap;
     Button btnEnemyMap;
     ArrayList<Item> listItemUser = InfoMatch.getListItemUser();
+    int nextPosition = 0;
     int isRun = 1;
     int timeCountdown = 60;
     private Handler mHandler = new Handler();
@@ -102,7 +104,6 @@ public class InGameActivity extends TabActivity {
                if(Bluetooth.getYourTurn() && InfoMatch.getCurrentSpell(0) != null)
                {
                    InfoMatch.setIsShooting(1);
-
                    imageViewSpells[0].setImageResource(R.drawable.icon_lock);
 
                }
@@ -114,10 +115,12 @@ public class InGameActivity extends TabActivity {
             @Override
             public void onClick(View v) {
 
-                //if(imageViewSpells[0].) return;
+                if(Bluetooth.getYourTurn() && InfoMatch.getCurrentSpell(1) != null)
+                {
+                    InfoMatch.setIsShooting(2);
+                    imageViewSpells[0].setImageResource(R.drawable.icon_lock);
 
-                InfoMatch.setIsShooting(2);
-                imageViewSpells[1].setImageResource(R.drawable.icon_lock);
+                }
             }
         });
     }
@@ -171,7 +174,7 @@ public class InGameActivity extends TabActivity {
     private Runnable randomItemRunable = new Runnable() {
         @Override
         public void run() {
-            int nextPosition = 0;
+
             if(isRun == 0){
                 mHandler.removeCallbacks(this);
             }
@@ -180,13 +183,21 @@ public class InGameActivity extends TabActivity {
                 Log.d("my-debuger", "turn:" + turn);
                 if(Bluetooth.getYourTurn() && !InfoMatch.getIsRandomItem() || Integer.parseInt(getIntent().getStringExtra("Mode")) != 1 && !InfoMatch.getIsRandomItem()){
                     if (InfoMatch.getTurn() % 3 == 0) {
-                        Random random = new Random();
-                        Integer index = random.nextInt(listItemUser.size());
-                        Item skill = listItemUser.get(index);
-                        imageViewSpells[nextPosition].setImageResource(getResources().getIdentifier(skill.getImageName(), "drawable", getPackageName()));
-                      //imageViewSpell1.setImageResource(getResources().getIdentifier(skill.getImageName(), "drawable", getPackageName()));
-                        InfoMatch.setCurrentSpell(skill, nextPosition);
-                        InfoMatch.setIsRandomItem(true);
+
+                        for(int i= 0;i< InfoMatch.getNumberSpell(); i++)
+                        {
+                            if(InfoMatch.getCurrentSpell(i) == null)
+                            {
+                                Random random = new Random();
+                                Integer index = random.nextInt(listItemUser.size());
+                                Item skill = listItemUser.get(index);
+                                imageViewSpells[i].setImageResource(getResources().getIdentifier(skill.getImageName(), "drawable", getPackageName()));
+                                InfoMatch.setCurrentSpell(skill, i);
+                                InfoMatch.setIsRandomItem(true);
+                                break;
+                            }
+                        }
+
                     }
                     // Bluetooth.setDataSending("");
                 }
