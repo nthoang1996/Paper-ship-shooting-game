@@ -262,6 +262,8 @@ public class PlayerMap extends AppCompatActivity {
                                 startActivity(intent);
 
                             }
+
+                            InfoMatch.setIsHandleDataYourMap(true);
                         }
                     }
                     if(tokens[0].equals("useSpell")){
@@ -272,10 +274,14 @@ public class PlayerMap extends AppCompatActivity {
                             statusMap[Integer.parseInt(tokens[1])] = 200+  Integer.parseInt(tokens[2]);
                             Log.d("use", "used");
                             adapter.notifyDataSetChanged();
-
+                            InfoMatch.setIsIsHandleDataEnemyMap(true);
                         }
                     }
-                    Bluetooth.setDataSending("");
+                    if(InfoMatch.isIsHandleDataYourMap() && InfoMatch.isIsHandleDataEnemyMap){
+                        Bluetooth.setDataSending("");
+                        InfoMatch.setIsHandleDataYourMap(false);
+                        InfoMatch.setIsIsHandleDataEnemyMap(false);
+                    }
 
                 }
                 else if(!Bluetooth.getYourTurn()){

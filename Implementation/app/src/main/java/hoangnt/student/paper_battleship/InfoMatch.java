@@ -14,9 +14,45 @@ public class InfoMatch {
 
     public static int isShooting = 0;
 
+    public static ArrayList<Item> getListAllItem() {
+        return listAllItem;
+    }
+
+    public static boolean isIsRandomItem() {
+        return isRandomItem;
+    }
+
+    public static Item[] getCurrentSpells() {
+        return currentSpells;
+    }
+
+    public static void setCurrentSpells(Item[] currentSpells) {
+        InfoMatch.currentSpells = currentSpells;
+    }
+
+    public static boolean isIsHandleDataYourMap() {
+        return isHandleDataYourMap;
+    }
+
+    public static void setIsHandleDataYourMap(boolean isHandleDataYourMap) {
+        InfoMatch.isHandleDataYourMap = isHandleDataYourMap;
+    }
+
+    public static boolean isIsIsHandleDataEnemyMap() {
+        return isIsHandleDataEnemyMap;
+    }
+
+    public static void setIsIsHandleDataEnemyMap(boolean isIsHandleDataEnemyMap) {
+        InfoMatch.isIsHandleDataEnemyMap = isIsHandleDataEnemyMap;
+    }
+
     public static int numberSpell=0;
 
     public static Item[] currentSpells;
+
+    public static boolean isHandleDataYourMap = false;
+
+    public static boolean isIsHandleDataEnemyMap = false;
 
     public static void setCurrentSpell(Item item, int index){ currentSpells[index] = item;}
 
