@@ -239,14 +239,14 @@ public class PlayerMap extends AppCompatActivity {
             }
             else {
                 if(!Bluetooth.getDataSending().isEmpty()){
-                    Log.d("use", getIntent().getStringExtra("Map"));
+                    Log.d("Thread", getIntent().getStringExtra("Map"));
                     String message = Bluetooth.getDataSending();
                     String[] tokens = message.split(":");
                     Log.d("message", tokens[0]);
-                    if(tokens[0].equals("shoot")) {
+                    if (getIntent().getStringExtra("Map").equals("Your")) {
                         Bluetooth.setYourTurn(true);
                         InfoMatch.setIsChangeTurn(true);
-                        if (getIntent().getStringExtra("Map").equals("Your")) {
+                        if(tokens[0].equals("shoot")) {
                             if (statusMap[Integer.parseInt(tokens[1])] >= 1 && statusMap[Integer.parseInt(tokens[1])] <= 10 || statusMap[Integer.parseInt(tokens[1])] >= 21 && statusMap[Integer.parseInt(tokens[1])] <= 30) {
                                 statusMap[Integer.parseInt(tokens[1])] += 61;
                             } else {
@@ -262,22 +262,21 @@ public class PlayerMap extends AppCompatActivity {
                                 startActivity(intent);
 
                             }
-
-                            InfoMatch.setIsHandleDataYourMap(true);
                         }
+                        InfoMatch.setIsHandleDataYourMap(true);
                     }
-                    if(tokens[0].equals("useSpell")){
+                    if (getIntent().getStringExtra("Map").equals("Enemy")){
                         Log.d("use", getIntent().getStringExtra("Map"));
-                        if (getIntent().getStringExtra("Map").equals("Enemy")){
+                        if(tokens[0].equals("useSpell")){
                             /*Toast useSpell = Toast.makeText(getApplicationContext(),"Enemy use " + tokens[3],Toast.LENGTH_LONG);
                             useSpell.show();*/
                             statusMap[Integer.parseInt(tokens[1])] = 200+  Integer.parseInt(tokens[2]);
                             Log.d("use", "used");
                             adapter.notifyDataSetChanged();
-                            InfoMatch.setIsIsHandleDataEnemyMap(true);
                         }
+                        InfoMatch.setIsIsHandleDataEnemyMap(true);
                     }
-                    if(InfoMatch.isIsHandleDataYourMap() && InfoMatch.isIsHandleDataEnemyMap){
+                    if(InfoMatch.isIsHandleDataYourMap() && InfoMatch.isIsIsHandleDataEnemyMap()){
                         Bluetooth.setDataSending("");
                         InfoMatch.setIsHandleDataYourMap(false);
                         InfoMatch.setIsIsHandleDataEnemyMap(false);
