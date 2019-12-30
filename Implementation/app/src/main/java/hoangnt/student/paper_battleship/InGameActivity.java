@@ -190,7 +190,7 @@ public class InGameActivity extends TabActivity {
                             {
                                 Random random = new Random();
                                 Integer index = random.nextInt(listItemUser.size());
-                                Item skill = listItemUser.get(index);
+                                Item skill = listItemUser.get(1);
                                 imageViewSpells[i].setImageResource(getResources().getIdentifier(skill.getImageName(), "drawable", getPackageName()));
                                 InfoMatch.setCurrentSpell(skill, i);
                                 InfoMatch.setIsRandomItem(true);
