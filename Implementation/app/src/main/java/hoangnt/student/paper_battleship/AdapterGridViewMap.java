@@ -81,13 +81,18 @@ public class AdapterGridViewMap  extends BaseAdapter {
                     holder.cell.setBackgroundResource(getIdImage(statusMap[position]));
                 }
             }
-            else if(statusMap[position] > 100 ){
-                if(idMap == 0 ) {
+            else if(statusMap[position] > 100 && statusMap[position] < 200){
+                if(idMap == 0 ){
+
                     holder.cell.setBackgroundResource(getIdImage(statusMap[position]));
                 }
                 else {
                     holder.cell.setBackgroundResource(getIdImage(statusMap[position]-11));
                 }
+            }
+            else if(statusMap[position] > 200)
+            {
+                if(statusMap[position] >= 212) holder.cell.setBackgroundResource(getIdImage(202));
             }
             else if(statusMap[position] == 20){
                 holder.cell.setBackgroundResource(R.drawable.shooted);
@@ -147,7 +152,7 @@ public class AdapterGridViewMap  extends BaseAdapter {
             case 129: return R.drawable.n_shipbr_4_2;
             case 130: return R.drawable.n_shipbr_4_1;
 
-            case 191: return R.drawable.skill_lvl2;
+            case 202: return R.drawable.skill_lvl2;
             case 192: return R.drawable.skill_lvl3;
             case 193: return R.drawable.skill_lvl4;
             case 194: return R.drawable.skill_lvl5;

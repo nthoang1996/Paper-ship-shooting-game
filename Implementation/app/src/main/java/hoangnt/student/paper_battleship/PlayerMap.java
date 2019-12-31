@@ -24,7 +24,7 @@ public class PlayerMap extends AppCompatActivity {
     int isRun = 1;
     int[] statusMap;
     int[] selectedMap;
-    Ship [] listShip;
+    Ship[] listShip;
     ArrayList<String> listPosition = new ArrayList<String>();
     AnimationDrawable shootAnimation;
 
@@ -35,25 +35,25 @@ public class PlayerMap extends AppCompatActivity {
 
         statusMap = new int[50];
         selectedMap = new int[50];
-        for(int i =0 ; i< 50; i++){
+        for (int i = 0; i < 50; i++) {
             statusMap[i] = 0;
             selectedMap[i] = 0;
         }
-        final int init=1;
+        final int init = 1;
 
-        for(int i = 0; i<50 ; i++){
+        for (int i = 0; i < 50; i++) {
             listPosition.add("" + i);
         }
 
-        ArrayList<String> listData =  getIntent().getStringArrayListExtra("listShip");
+        ArrayList<String> listData = getIntent().getStringArrayListExtra("listShip");
         listShip = new Ship[7];
-        if(listData != null){
+        if (listData != null) {
             listShip = new Helper(getApplication()).parseListStringToListShipObject(listData);
         }
 
-        for(int i =0 ; i< listShip.length; i++){
-            for(int j=0; j< listShip[i].getPosition().size(); j++){
-                if(listShip[i].getPosition().get(j) >= 0){
+        for (int i = 0; i < listShip.length; i++) {
+            for (int j = 0; j < listShip[i].getPosition().size(); j++) {
+                if (listShip[i].getPosition().get(j) >= 0) {
                     statusMap[listShip[i].getPosition().get(j)] = listShip[i].getId_part().get(j);
                 }
             }
@@ -61,54 +61,120 @@ public class PlayerMap extends AppCompatActivity {
 
         myGridView = findViewById(R.id.gridview_BoardGame);
         int idMap;
-        if(getIntent().getStringExtra("Map").equals("Enemy")){
+        if (getIntent().getStringExtra("Map").equals("Enemy")) {
             idMap = 0;
             InfoMatch.setListEnemyShip(listShip);
-        }
-        else {
+        } else {
             idMap = 1;
         }
         adapter = new AdapterGridViewMap(this, R.layout.map_cell, listShip, statusMap, idMap);
         myGridView.setAdapter(adapter);
 
 
-
         final Ship[] finalListShip = listShip;
         myGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(getIntent().getStringExtra("Map").equals("Enemy") && Bluetooth.getYourTurn() && selectedMap[position] != 1){
-                    if(InfoMatch.getIsShooting() == 0)
+
+                if (InfoMatch.getIsShooting() != 0) {
+                    Item spell = InfoMatch.getCurrentSpell(InfoMatch.getIsShooting() - 1);
+
+
+
+                    switch (spell.getLevel())
                     {
+                        case 2:
+                            if (getIntent().getStringExtra("Map").equals("Your") && Bluetooth.getYourTurn() && selectedMap[position] != 1) {
+                                statusMap[position] = 212 + spell.getLevel();
+                            }
+                            break;
+
+                        case 3:
+                            int pos = 0;
+                            Random random = new Random();
+                            do{
+                                pos = random.nextInt(51);
+                            }while ( selectedMap[pos] != 0 && pos != position);
+
+                            View childView = (View) parent.getChildAt(pos);
+                            ImageView img = childView.findViewById(R.id.cell_grid);
+                            img.setBackgroundResource(R.drawable.shooted);
+                            if (statusMap[pos] >= 1 && statusMap[pos] <= 10 || statusMap[pos] >= 21 && statusMap[pos] <= 30) {
+                                statusMap[pos] += 50;
+                                img.setBackgroundResource(R.drawable.x);
+                            }
+                            else
+                            {
+                                statusMap[pos] +=20;
+                                img.setBackgroundResource(R.drawable.shooted);
+                            }
+
+                            selectedMap[pos] = 1;
+                            isShootToShip(finalListShip, pos, 0);
+                            checkAnyShipDestroyed(finalListShip);
+
+                            if (checkFinish(listShip, 1) == 1) {
+                                Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
+                                intent.putExtra("context", "1");
+                                intent.putExtra("exp", "" + caculatorExp(listShip));
+                                startActivity(intent);
+                            }
+
+
+                            break;
+
+                        default:
+                            statusMap[position] = 200 + spell.getLevel();
+                            break;
+                    }
+
+                    String command = "useSpell:" + position + ":" + spell.getLevel() + ":" + spell.getSpellName();
+                    if (Integer.parseInt(getIntent().getStringExtra("Mode")) == 1) {
+                        Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
+                    }
+
+                    adapter.notifyDataSetChanged();
+                    InfoMatch.setCurrentSpell(null, InfoMatch.getIsShooting() - 1);
+                    InfoMatch.setIsShooting(0);
+                }
+
+                if (getIntent().getStringExtra("Map").equals("Enemy") && Bluetooth.getYourTurn() && selectedMap[position] != 1) {
+                    if (InfoMatch.getIsShooting() == 0) {
 
                         Bluetooth.setYourTurn(false);
                         InfoMatch.setIsRandomItem(false);
                         InfoMatch.setIsChangeTurn(true);
                         InfoMatch.setTurn(InfoMatch.getTurn() + 1);
-                        String command = "shoot:"+ position;
-                        if(Integer.parseInt(getIntent().getStringExtra("Mode")) == 1){
-                        Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
-                    } else {
+                        String command = "shoot:" + position;
+                        if (Integer.parseInt(getIntent().getStringExtra("Mode")) == 1) {
+                            Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
+                        } else {
 
                         }
-                        View childView=  (View)parent.getChildAt(position);
+                        View childView = (View) parent.getChildAt(position);
                         ImageView img = childView.findViewById(R.id.cell_grid);
                         img.setBackgroundResource(R.drawable.shooted);
                         shootAnimation = (AnimationDrawable) img.getDrawable();
-                        if(statusMap[position] >=1 && statusMap[position] <=10 || statusMap[position] >= 21 && statusMap[position] <=30){
+                        if (statusMap[position] >= 1 && statusMap[position] <= 10 || statusMap[position] >= 21 && statusMap[position] <= 30) {
                             statusMap[position] += 50;
                             img.setBackgroundResource(R.drawable.x);
                         }
-                        else {
+                        else if (statusMap[position] >= 212)
+                        {
+                            statusMap[position] = statusMap[position] - 212;
+                            adapter.notifyDataSetChanged();
+                        }
+                        else
+                        {
 
-                            statusMap[position] += 20;
+                            statusMap[position] +=20;
                             img.setBackgroundResource(R.drawable.shooted);
                         }
                         selectedMap[position] = 1;
                         isShootToShip(finalListShip, position, 0);
                         checkAnyShipDestroyed(finalListShip);
 
-                        if(checkFinish(listShip, 1) == 1){
+                        if (checkFinish(listShip, 1) == 1) {
                             Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
                             intent.putExtra("context", "1");
                             intent.putExtra("exp", "" + caculatorExp(listShip));
@@ -118,110 +184,90 @@ public class PlayerMap extends AppCompatActivity {
 
                 }
 
-                if(getIntent().getStringExtra("Map").equals("Your") && Bluetooth.getYourTurn() && selectedMap[position] != 1){
-                    if(InfoMatch.getIsShooting()!=0 && statusMap[position] == 0){
-                        Item spell = InfoMatch.getCurrentSpell(InfoMatch.getIsShooting() -1);
-
-                        View childView=  (View)parent.getChildAt(position);
-                        ImageView img = childView.findViewById(R.id.cell_grid);
-                       // img.setBackgroundResource(getResources().getIdentifier(spell.getImageName(), "drawable", getPackageName()));
-                        String command = "useSpell:"+position+":"+ spell.getLevel()+":"+spell.getSpellName();
-                        if(Integer.parseInt(getIntent().getStringExtra("Mode")) == 1) {
-                            Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
-                        }
-
-                       /* switch (spell.getLevel())
-                        {
-                            case 2:
-
-                                break;
 
 
-                        }*/
-                        statusMap[position] = 200+spell.getLevel();
-                        adapter.notifyDataSetChanged();
-                        InfoMatch.setCurrentSpell(null, InfoMatch.getIsShooting() -1 );
-                        InfoMatch.setIsShooting(0);
-                    }
                 }
 
-            }
+
         });
 
         listenerRunable.run();
 //        listenerTimeoutRunable.run();
     }
 
-    public void isShootToShip(Ship[] listShip, int position, int idMap){
-        for(int i =0 ; i< listShip.length; i++) {
+    public void isShootToShip(Ship[] listShip, int position, int idMap) {
+        for (int i = 0; i < listShip.length; i++) {
             for (int j = 0; j < listShip[i].getPosition().size(); j++) {
-                if(position == listShip[i].getPosition().get(j)){
+                if (position == listShip[i].getPosition().get(j)) {
                     listShip[i].getStatus().set(j, false);
                 }
-                if(idMap == 0){
+                if (idMap == 0) {
                     InfoMatch.setListEnemyShip(listShip);
                 }
             }
         }
     }
 
-    public void checkAnyShipDestroyed(Ship[] listShip){
-        for(int i =0 ; i< listShip.length; i++) {
+    public void checkAnyShipDestroyed(Ship[] listShip) {
+        for (int i = 0; i < listShip.length; i++) {
             int count = 0;
             for (int j = 0; j < listShip[i].getPosition().size(); j++) {
-                if(!listShip[i].getStatus().get(j)){
-                    count +=1;
+                if (!listShip[i].getStatus().get(j)) {
+                    count += 1;
                 }
             }
-            if(count== listShip[i].getPosition().size()){
+            if (count == listShip[i].getPosition().size()) {
                 showShip(listShip[i]);
                 adapter.notifyDataSetChanged();
             }
         }
     }
 
-    public void showShip(Ship ship){
-        for (int i = 0; i<ship.getPosition().size(); i++){
+    public void showShip(Ship ship) {
+        for (int i = 0; i < ship.getPosition().size(); i++) {
             Log.d("my-debuger", "" + ship.getPosition().get(i));
-            if(statusMap[ship.getPosition().get(i)]<100){
+            if (statusMap[ship.getPosition().get(i)] < 100) {
                 statusMap[ship.getPosition().get(i)] += 50;
             }
 
         }
     }
 
-    public int checkFinish(Ship[] listShip, int context){
-        for(int i = 0; i<listShip.length; i++){
-            for(int j = 0; j < listShip[i].getPosition().size(); j++){
-                if(listShip[i].getPosition().get(j) >= 0 ){
-                    if(listShip[i].getStatus().get(j)){
+    public int checkFinish(Ship[] listShip, int context) {
+        for (int i = 0; i < listShip.length; i++) {
+            for (int j = 0; j < listShip[i].getPosition().size(); j++) {
+                if (listShip[i].getPosition().get(j) >= 0) {
+                    if (listShip[i].getStatus().get(j)) {
                         return 0;
                     }
                 }
             }
         }
-        if(context == 2){
+        if (context == 2) {
             return 2;
-        }
-        else {
+        } else {
             return 1;
         }
     }
 
-    public int caculatorExp(Ship[] listShip){
+    public int caculatorExp(Ship[] listShip) {
         int exp = 0;
-        for(int i =0;i <listShip.length; i++){
-            for(int j = 0; j< listShip[i].getStatus().size(); j++){
-                if(listShip[i].getPosition().get(j) >= 0 ){
-                    if(!listShip[i].getStatus().get(j)){
-                        switch (listShip[i].getType()){
-                            case 1: exp += 10;
+        for (int i = 0; i < listShip.length; i++) {
+            for (int j = 0; j < listShip[i].getStatus().size(); j++) {
+                if (listShip[i].getPosition().get(j) >= 0) {
+                    if (!listShip[i].getStatus().get(j)) {
+                        switch (listShip[i].getType()) {
+                            case 1:
+                                exp += 10;
                                 break;
-                            case 2: exp +=15;
+                            case 2:
+                                exp += 15;
                                 break;
-                            case 3: exp += 20;
+                            case 3:
+                                exp += 20;
                                 break;
-                            case 4: exp+= 25;
+                            case 4:
+                                exp += 25;
                                 break;
                         }
                     }
@@ -234,22 +280,22 @@ public class PlayerMap extends AppCompatActivity {
     private Runnable listenerRunable = new Runnable() {
         @Override
         public void run() {
-            if(isRun == 0){
+            if (isRun == 0) {
                 mHandler.removeCallbacks(this);
-            }
-            else {
-                if(!Bluetooth.getDataSending().isEmpty()){
+            } else {
+                if (!Bluetooth.getDataSending().isEmpty()) {
                     Log.d("Thread", getIntent().getStringExtra("Map"));
                     String message = Bluetooth.getDataSending();
                     String[] tokens = message.split(":");
                     Log.d("message", tokens[0]);
                     if (getIntent().getStringExtra("Map").equals("Your")) {
-                        Bluetooth.setYourTurn(true);
-                        InfoMatch.setIsChangeTurn(true);
-                        if(tokens[0].equals("shoot")) {
+                        if (tokens[0].equals("shoot")) {
+                            Bluetooth.setYourTurn(true);
+                            InfoMatch.setIsChangeTurn(true);
                             if (statusMap[Integer.parseInt(tokens[1])] >= 1 && statusMap[Integer.parseInt(tokens[1])] <= 10 || statusMap[Integer.parseInt(tokens[1])] >= 21 && statusMap[Integer.parseInt(tokens[1])] <= 30) {
                                 statusMap[Integer.parseInt(tokens[1])] += 61;
-                            } else {
+                            }
+                            else {
                                 statusMap[Integer.parseInt(tokens[1])] += 20;
                             }
                             isShootToShip(listShip, Integer.parseInt(tokens[1]), 1);
@@ -265,41 +311,68 @@ public class PlayerMap extends AppCompatActivity {
                         }
                         InfoMatch.setIsHandleDataYourMap(true);
                     }
-                    if (getIntent().getStringExtra("Map").equals("Enemy")){
+
                         Log.d("use", getIntent().getStringExtra("Map"));
-                        if(tokens[0].equals("useSpell")){
-                            /*Toast useSpell = Toast.makeText(getApplicationContext(),"Enemy use " + tokens[3],Toast.LENGTH_LONG);
-                            useSpell.show();*/
-                            statusMap[Integer.parseInt(tokens[1])] = 200+  Integer.parseInt(tokens[2]);
-                            Log.d("use", "used");
-                            adapter.notifyDataSetChanged();
+                        if (tokens[0].equals("useSpell")) {
+                            Toast useSpell = Toast.makeText(getApplicationContext(), "Enemy use " + tokens[3], Toast.LENGTH_LONG);
+                            useSpell.show();
+                            switch (Integer.parseInt(tokens[2]))
+                            {
+                                case 2:
+                                    if (getIntent().getStringExtra("Map").equals("Enemy")) {
+
+                                        statusMap[Integer.parseInt(tokens[1])] = 212 + statusMap[Integer.parseInt(tokens[1])];
+                                        Log.d("use", "used");
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                    break;
+                                case 3:
+                                    if (statusMap[Integer.parseInt(tokens[1])] >= 1 && statusMap[Integer.parseInt(tokens[1])] <= 10 || statusMap[Integer.parseInt(tokens[1])] >= 21 && statusMap[Integer.parseInt(tokens[1])] <= 30) {
+                                        statusMap[Integer.parseInt(tokens[1])] += 61;
+                                    }
+                                    else {
+                                        statusMap[Integer.parseInt(tokens[1])] += 20;
+                                    }
+                                    isShootToShip(listShip, Integer.parseInt(tokens[1]), 1);
+                                    checkAnyShipDestroyed(listShip);
+                                    adapter.notifyDataSetChanged();
+                                    if (checkFinish(listShip, 2) == 2) {
+                                        Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
+                                        intent.putExtra("context", "2");
+                                        intent.putExtra("exp", "" + caculatorExp(InfoMatch.getListEnemyShip()));
+                                        startActivity(intent);
+
+                                    }
+                                    break;
+
+                            }
+
                         }
-                        InfoMatch.setIsIsHandleDataEnemyMap(true);
-                    }
-                    if(InfoMatch.isIsHandleDataYourMap() && InfoMatch.isIsIsHandleDataEnemyMap()){
+
+                    InfoMatch.setIsIsHandleDataEnemyMap(true);
+
+                    if (InfoMatch.isIsHandleDataYourMap() && InfoMatch.isIsIsHandleDataEnemyMap()) {
                         Bluetooth.setDataSending("");
                         InfoMatch.setIsHandleDataYourMap(false);
                         InfoMatch.setIsIsHandleDataEnemyMap(false);
                     }
 
-                }
-                else if(!Bluetooth.getYourTurn()){
+                } else if (!Bluetooth.getYourTurn()) {
                     Log.d("my-debuger", "Enter thread");
-                    if(Integer.parseInt(getIntent().getStringExtra("Mode")) != 1){
+                    if (Integer.parseInt(getIntent().getStringExtra("Mode")) != 1) {
                         Bluetooth.setYourTurn(true);
-                        if(getIntent().getStringExtra("Map").equals("Your")){
+                        if (getIntent().getStringExtra("Map").equals("Your")) {
                             int position = findNextShootPosition(listPosition, statusMap);
-                            if(statusMap[position] >=1 && statusMap[position] <=10 || statusMap[position] >= 21 && statusMap[position] <=30){
+                            if (statusMap[position] >= 1 && statusMap[position] <= 10 || statusMap[position] >= 21 && statusMap[position] <= 30) {
                                 statusMap[position] += 61;
-                            }
-                            else {
+                            } else {
                                 statusMap[position] += 20;
                             }
                             isShootToShip(listShip, position, 1);
                             checkAnyShipDestroyed(listShip);
                             adapter.notifyDataSetChanged();
                             listPosition.remove("" + position);
-                            if(checkFinish(listShip, 2) == 2){
+                            if (checkFinish(listShip, 2) == 2) {
                                 Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
                                 intent.putExtra("context", "2");
                                 intent.putExtra("exp", "" + caculatorExp(InfoMatch.getListEnemyShip()));
@@ -314,15 +387,15 @@ public class PlayerMap extends AppCompatActivity {
         }
     };
 
-    public int findNextShootPosition(ArrayList<String> listPosition, int[] statusMap){
-        for(int i = 0; i < statusMap.length; i++){
-            if(statusMap[i] > 62 && statusMap[i] <= 71 || statusMap[i] > 82 && statusMap[i] <=91) {
-                if(i-5 >=0){
+    public int findNextShootPosition(ArrayList<String> listPosition, int[] statusMap) {
+        for (int i = 0; i < statusMap.length; i++) {
+            if (statusMap[i] > 62 && statusMap[i] <= 71 || statusMap[i] > 82 && statusMap[i] <= 91) {
+                if (i - 5 >= 0) {
                     if (statusMap[i - 5] > 1 && statusMap[i - 5] <= 10 || statusMap[i - 5] > 21 && statusMap[i - 5] <= 30) {
-                        int position = i-5;
+                        int position = i - 5;
                         while (position >= 0) {
-                            if (statusMap[position ] > 1 && statusMap[position] <= 10 || statusMap[position] > 21 && statusMap[position] <= 30) {
-                                return position ;
+                            if (statusMap[position] > 1 && statusMap[position] <= 10 || statusMap[position] > 21 && statusMap[position] <= 30) {
+                                return position;
                             }
                             if (statusMap[position] == 0) {
                                 break;
@@ -331,12 +404,12 @@ public class PlayerMap extends AppCompatActivity {
                         }
                     }
                 }
-                if(i+5<50){
+                if (i + 5 < 50) {
                     if (statusMap[i + 5] > 1 && statusMap[i + 5] <= 10 || statusMap[i + 5] > 21 && statusMap[i + 5] <= 30) {
                         int position = i + 5;
                         while (position < 50) {
                             if (statusMap[position] > 1 && statusMap[position] <= 10 || statusMap[position] > 21 && statusMap[position] <= 30) {
-                                return position ;
+                                return position;
                             }
                             if (statusMap[position] == 0) {
                                 break;
@@ -348,10 +421,10 @@ public class PlayerMap extends AppCompatActivity {
                 if (statusMap[i - 1] > 1 && statusMap[i - 1] <= 10 || statusMap[i - 1] > 21 && statusMap[i - 1] <= 30) {
                     int position = i - 1;
                     while (position % 5 != 4) {
-                        if (statusMap[position ] > 1 && statusMap[position ] <= 10 || statusMap[position] > 21 && statusMap[position ] <= 30) {
-                            return position ;
+                        if (statusMap[position] > 1 && statusMap[position] <= 10 || statusMap[position] > 21 && statusMap[position] <= 30) {
+                            return position;
                         }
-                        if (statusMap[position ] == 0) {
+                        if (statusMap[position] == 0) {
                             break;
                         }
                         position = position - 1;
@@ -359,7 +432,7 @@ public class PlayerMap extends AppCompatActivity {
                 }
                 if (statusMap[i + 1] > 1 && statusMap[i + 1] <= 10 || statusMap[i + 1] > 21 && statusMap[i + 1] <= 30) {
                     int position = i + 1;
-                    while (position % 5  != 0) {
+                    while (position % 5 != 0) {
                         if (statusMap[position] > 1 && statusMap[position] <= 10 || statusMap[position] > 21 && statusMap[position] <= 30) {
                             return position;
                         }
@@ -372,12 +445,12 @@ public class PlayerMap extends AppCompatActivity {
             }
         }
         Random rand = new Random();
-        return Integer.parseInt(listPosition.get(rand.nextInt(listPosition.size()))) ;
+        return Integer.parseInt(listPosition.get(rand.nextInt(listPosition.size())));
     }
 
-    public int findNextShootPosition(int[] statusMap){
-        for(int i =0; i<statusMap.length; i++){
-            if(statusMap[i]!= 20 && (statusMap[i] < 50 || statusMap[i] > 59) && (statusMap[i] < 70 || statusMap[i] > 79) && (statusMap[i] <101 || statusMap[i] >110) && (statusMap[i] < 121 || statusMap[i] > 130)){
+    public int findNextShootPosition(int[] statusMap) {
+        for (int i = 0; i < statusMap.length; i++) {
+            if (statusMap[i] != 20 && (statusMap[i] < 50 || statusMap[i] > 59) && (statusMap[i] < 70 || statusMap[i] > 79) && (statusMap[i] < 101 || statusMap[i] > 110) && (statusMap[i] < 121 || statusMap[i] > 130)) {
                 return i;
             }
         }
@@ -387,24 +460,23 @@ public class PlayerMap extends AppCompatActivity {
     private Runnable listenerTimeoutRunable = new Runnable() {
         @Override
         public void run() {
-            if(isRun == 0){
+            if (isRun == 0) {
                 mHandler.removeCallbacks(this);
-            }
-            else {
-                if(InfoMatch.isIsTimeOut()){
+            } else {
+                if (InfoMatch.isIsTimeOut()) {
                     InfoMatch.setIsTimeOut(false);
                     Bluetooth.setYourTurn(false);
                     InfoMatch.setIsRandomItem(false);
                     InfoMatch.setIsChangeTurn(true);
                     InfoMatch.setTurn(InfoMatch.getTurn() + 1);
                     int position = findNextShootPosition(statusMap);
-                    String command = ""+position;
+                    String command = "" + position;
                     Bluetooth.getBluetoothConnection().write(command.getBytes(Charset.defaultCharset()));
                     selectedMap[position] = 1;
                     isShootToShip(listShip, position, 0);
                     checkAnyShipDestroyed(listShip);
 
-                    if(checkFinish(listShip, 1) == 1){
+                    if (checkFinish(listShip, 1) == 1) {
                         Intent intent = new Intent(PlayerMap.this, ResultActivity.class);
                         intent.putExtra("context", "1");
                         intent.putExtra("exp", "" + caculatorExp(listShip));
@@ -416,11 +488,6 @@ public class PlayerMap extends AppCompatActivity {
         }
     };
 
-    private void useSpell(Item spell)
-    {
-     switch (spell.getLevel())  {
-         case 3:
 
-     }
-    }
+
 }
